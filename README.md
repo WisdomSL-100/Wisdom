@@ -1,13 +1,16 @@
 # AegisDrive Automotive Cybersecurity Scanner
 
-AegisDrive is a local-first automotive cybersecurity prototype for exploring
-security assessment workflows against a simulated software-defined vehicle
-(SDV). It combines a dashboard, cloud-style orchestration API, central scan
-service, and a multi-node vehicle-network simulator.
+AegisDrive is an automotive cybersecurity prototype for exploring security
+assessment workflows against a simulated software-defined vehicle (SDV). It
+combines a dashboard, cloud-style orchestration API, central scan service, and
+a multi-node vehicle-network simulator.
 
-The project is **All vehicle, protocol, diagnostic, attack, and firmware-update
-activity in this repository is simulated. It does not connect to or test a
-physical vehicle.**
+> **Live demo:** [aegisdrive-automotive.duckdns.org](https://aegisdrive-automotive.duckdns.org)
+> — dashboard access requires credentials shared privately by the project team.
+
+All vehicle, protocol, diagnostic, attack, and firmware-update activity in
+this repository is simulated. It does not connect to or test a physical
+vehicle.
 
 > **Prototype notice:** This is research/demo software, not a production
 > vehicle security product, certified test tool, OEM security case, or
@@ -309,14 +312,16 @@ simulator sockets use HMAC-authenticated messages. These mechanisms are for
 the local prototype; deployment credentials and security hardening must be
 reviewed before any internet-accessible demo.
 
-## GCP deployment
+## Live GCP demo
 
-The project includes a Compute Engine demo deployment path using a Caddy HTTPS
-reverse proxy and Basic Auth. It has not yet been verified against the user's
-GCP project. Follow [the GCP demo deployment runbook](config/GCP_DEPLOYMENT.md)
-from Google Cloud Shell; it covers static IP/DNS, IAP SSH, firewall ports, and
-private password setup. This is a simulator demo, not a hardened production
-service.
+The simulator dashboard is deployed on Google Cloud Compute Engine and is
+available at [https://aegisdrive-automotive.duckdns.org](https://aegisdrive-automotive.duckdns.org).
+Dashboard credentials are shared privately; do not publish them in this
+repository. HTTPS and Basic Auth are provided by Caddy. The VM deployment
+setup is documented in [the GCP demo deployment runbook](config/GCP_DEPLOYMENT.md),
+including DNS, IAP SSH, firewall ports, and password setup.
+
+This is an authenticated simulator demo, not a hardened production service.
 
 ## Scope, privacy, and safe use
 
