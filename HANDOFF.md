@@ -21,7 +21,9 @@ Workspace: `C:\work\workspace\automotive-cybersecurity-scanner` (Windows). Exist
 - `POST /sovd/v1/diagnostics` sends supported diagnostic operations as target-specific node requests.
 - Simulated OTA can produce UDS `0x10`, `0x27`, `0x34`, `0x36`, and `0x37` messages. These frames represent simulated activity only.
 - `GET /architecture` on central compute provides the module and socket map.
-- `vehicle-network/` is a legacy copy; deployment and integration tests use `vehicle-network_Simulator/`.
+- Deployment and integration tests use `vehicle-network_Simulator/`.
+- Flooding is supported on every ECU, ZCU, and HPC in all assessment modes. Service-center safe retains its medium-severity ceiling and separate DoS restriction.
+- Per-scan event-identity comparisons feed aggregate new-event counts into charts, outcome cards, and reports; unchanged OTA findings do not hide later scan events.
 
 ## Verification
 
@@ -29,15 +31,16 @@ Run from the project root:
 
 ```powershell
 C:\work\workspace\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_vehicle_network_*.py"
+node --test tests/test_dashboard_runtime.js
 ```
 
 Socket tests cover direct and zonal routing, node-owned UDS/OTA/SOME/IP/SOVD handling, IDS behavior, and scan-state gating in the local simulator configuration.
 
 ## Known validation limits / next work
 
-- Docker is unavailable in the current environment; Compose startup and real container-to-container communication have not been verified here.
-- Re-run the complete vehicle-network test suite after changes to per-node routing.
+- Docker-compatible Compose is available through Podman in Ubuntu/WSL. Compose configuration and deployment-script syntax can be checked there; rebuilding and exercising the current changes in containers is a separate validation step.
 - The dashboard's Network sockets view now shows controller CAN/TCP endpoints and live frame/probe activity, including scan phase, CAN ID, DLC, payload bytes, and rejection reasons.
-- The bounded CAN protocol probes use controller-owned CAN sockets in deployed routing mode. The timed authorized attack scenario is still explicitly marker-only and does not send an attack payload; do not present it as a CAN/TCP injection.
+- Bounded protocol probes and timed authorized tests send protocol-shaped frames or diagnostic/firmware probes through simulator handlers. These are simulator socket operations, never physical CAN/TCP vehicle attacks.
 - Confirm aggregate snapshots include all live node diagnostics, messages, security events, and OTA state.
-- Docker is unavailable in the current environment, so the new multi-container listeners and Compose health checks remain unverified in real containers.
+- The public HTTPS endpoint responds with an authentication challenge. Authenticated dashboard behavior and deployment of the latest commit must still be checked on the VM.
+- Historical matrix and performance figures are documented separately and are not a fresh benchmark of the latest commit.

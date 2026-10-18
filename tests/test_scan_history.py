@@ -72,6 +72,53 @@ class ScanHistoryTests(unittest.TestCase):
             os.environ["CENTRAL_SERVICE_JWT_SECRET"] = self.previous_jwt_secret
         self.data_dir.cleanup()
 
+    def test_scan_local_event_counts_survive_privacy_filter_and_storage(self):
+        record = self.cloud_app.save_scan({
+            "after_attack": {
+                "new_security_event_count": 25,
+                "new_security_event_categories": {"invalid_authentication": 25},
+                "security_events": [{"event_id": "private-event"}],
+            }
+        })
+        phase = self.cloud_app.saved_scan(record["scan_id"])["after_attack"]
+        self.assertEqual(phase["new_security_event_count"], 25)
+        self.assertEqual(
+            phase["new_security_event_categories"], {"invalid_authentication": 25}
+        )
+        self.assertNotIn("security_events", phase)
+
+    def test_cloud_allows_bounded_flooding_in_every_mode(self):
+        for mode in ("service_center_safe", "oem_validation", "lab_penetration_test"):
+            with self.subTest(mode=mode):
+                service = Mock()
+                service.json.return_value = {"service_state": "in_service"}
+                result = Mock(status_code=200)
+                result.json.return_value = {
+                    "status": "completed", "risk_level": "low",
+                    "attack_summary": {"status": "completed"},
+                }
+                with patch.object(
+                    self.cloud_app, "central_request", side_effect=[service, result]
+                ) as central:
+                    response = self.client.post("/api/scan/start", json={
+                        "attack_type": "flooding", "severity": "medium",
+                        "duration_seconds": 1, "scan_mode": mode,
+                        "target_node_ids": ["hpc-vehicle"],
+                    })
+                self.assertEqual(response.status_code, 200, response.get_json())
+                self.assertEqual(central.call_args.kwargs["json"]["scan_mode"], mode)
+
+    def test_cloud_safe_mode_retains_dos_and_severity_limits(self):
+        for attack, severity in (("dos", "medium"), ("flooding", "high")):
+            with self.subTest(attack=attack, severity=severity):
+                with patch.object(self.cloud_app, "central_request") as central:
+                    response = self.client.post("/api/scan/start", json={
+                        "attack_type": attack, "severity": severity,
+                        "duration_seconds": 1, "scan_mode": "service_center_safe",
+                    })
+                self.assertEqual(response.status_code, 409)
+                central.assert_not_called()
+
     def test_scan_history_survives_app_reload(self):
         record = self.cloud_app.save_scan(
             {
@@ -579,7 +626,10 @@ class ScanHistoryTests(unittest.TestCase):
         self.assertEqual(
             central_post.call_args.kwargs["json"]["duration_seconds"], 3
         )
-        self.assertEqual(central_post.call_args.kwargs["timeout"], 48)
+        self.assertEqual(
+            central_post.call_args.kwargs["timeout"],
+            3 + self.cloud_app.SCAN_TIMEOUT_MARGIN_SECONDS,
+        )
         self.assertEqual(
             central_post.call_args.kwargs["verify"],
             self.cloud_app.CENTRAL_TLS_CA,

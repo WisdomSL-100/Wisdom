@@ -64,6 +64,6 @@ an attack scan. Assurance checks include:
 - optional SBOM/CVE summary metadata when included in a package.
 
 The package catalog and all flashes remain simulator-only. `service_center_safe`
-scan mode blocks flooding and DoS scenarios and limits severity to medium;
+scan mode allows bounded flooding, blocks the separate DoS scenario, and limits severity to medium;
 `oem_validation` and `lab_penetration_test` are separate bounded simulator
 policies. These results are not evidence of production hardware security.

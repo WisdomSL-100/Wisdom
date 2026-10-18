@@ -59,6 +59,13 @@ The dashboard configures attack duration from 1 to 60 seconds (default 10). Scan
 
 Cloud history stores only allowlisted aggregate phase metrics, model scores/counts, and model-status labels. Per-node feature vectors are not included. This is a data-minimization measure, not a claim of legal compliance; deployment owners must separately assess their DPDP obligations and retention/access controls.
 
+Post-test analytics include `new_security_event_count` and
+`new_security_event_categories`, computed by comparing event identities with the
+pre-test snapshot. This detects new events even when both rolling snapshot
+windows contain 500 records. These counts cover new events retained in the
+post-test snapshot, not events already evicted from that window. Raw event
+identities remain in Central Compute and are not stored in cloud history.
+
 The central-compute ↔ simulator socket uses newline-framed JSON and HMAC-SHA256 with `VEHICLE_SOCKET_SECRET` (at least 32 characters). Configure the secret outside source control. HMAC does not encrypt traffic; use TLS/mTLS when crossing an untrusted network.
 
 CAN and DoIP are simulated by the vehicle-network service's internal socket listeners; they are not physical vehicle buses. OTA and ECU flashing are simulator-only.

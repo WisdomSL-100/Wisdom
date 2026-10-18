@@ -26,7 +26,7 @@ vehicle.
 | Protocol model | CAN/CAN-FD-shaped frames, SOME/IP, DoIP, UDS, SOVD-style diagnostics, and authenticated simulator TCP sockets |
 | Analysis | Before/after network and diagnostic observations, baseline-relative behavior features, Isolation Forest scoring, and explainable aggregate findings |
 | OTA exploration | Synthetic signed-manifest packages, per-node simulated update workflows, software-profile weaknesses, and OTA assurance findings |
-| Dashboard | Live network and socket activity, attack/scan progress, node profiles, findings, history, analytics, and report downloads |
+| Dashboard | Live network and socket activity, attack/scan progress, node profiles, current findings, analytics, and report downloads; scan history is available through APIs |
 | Reports and CVEs | Markdown/XLSX scan reports; local CVE catalog, optional NVD synchronization, and SBOM component matching |
 | Local runtime | Docker Compose-compatible multi-container stack; Podman through the Docker-compatible Compose command works in WSL |
 
@@ -38,11 +38,12 @@ For the detailed component design, see [Architecture](ARCHITECTURE.md).
 
 ### 1. Dashboard and scan lifecycle
 
-The dashboard is served at `http://localhost:3000` after startup. Its **Live
-network** view presents scan controls, the modeled cloud/HPC/ZCU/ECU components,
-node security profiles, socket paths, and live simulator activity. The
-**Analytics & report** view presents scan findings and comparisons, attack and
-behavior summaries, history, and report exports.
+The dashboard is served at `http://localhost:3000` after startup. **Setup &
+controls** provides node selection, OTA and diagnostic tools, profiles, and scan
+controls. **Live packet console** shows socket traffic and phase-filtered
+activity. **Dashboard & reports** shows the latest assessment's outcomes,
+before/after charts, findings, and Markdown/XLSX exports. Persisted history is
+available through the history/evidence APIs, not a dashboard history tab.
 
 An authorized scan follows this high-level sequence:
 
@@ -50,9 +51,9 @@ An authorized scan follows this high-level sequence:
 2. Set the simulated vehicle service state to `in_service`. The simulator
    defaults to `out_of_service`; scans are blocked until explicitly enabled.
 3. Central Compute captures a pre-test snapshot and (when enabled) diagnostics.
-4. A bounded test and protocol probes execute against simulator handlers.
+4. Optional baseline protocol probes and a bounded test execute against simulator handlers.
 5. Post-test observations are compared with the baseline and summarized.
-6. Findings appear in the dashboard/history; Markdown and XLSX reports can be
+6. Findings appear in the dashboard and are saved in history; Markdown and XLSX reports can be
    downloaded from the final report step.
 
 The supported attack scenario identifiers are:
@@ -61,8 +62,11 @@ The supported attack scenario identifiers are:
 `unauthorized_diagnostics`, `cross_zone_access`, `invalid_firmware`, and
 `ids_auditability_regression`.
 
-Scan policy depends on mode. `service_center_safe` restricts severity and blocks
-flooding/DoS; `oem_validation` and `lab_penetration_test` allow the bounded
+Bounded simulator flooding is available for every ECU, ZCU, and HPC in all
+assessment modes. Explicit target selection limits the test to those nodes;
+without explicit targets, the flooding scenario includes all simulated nodes.
+Scan policy depends on mode. `service_center_safe` limits severity to medium
+and blocks the separate `dos` scenario; `oem_validation` and `lab_penetration_test` allow the bounded
 simulator scenarios subject to their configured policy. The dashboard and API
 validate inputs; the Central Compute layer independently checks service state.
 The Stop control ends the test window while allowing post-test analysis to
@@ -277,6 +281,13 @@ python -m pip install -r cloud-app/requirements.txt \
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
+With Node.js 18 or newer installed, run the dependency-free dashboard runtime
+regressions as well:
+
+```bash
+node --test tests/test_dashboard_runtime.js
+```
+
 The full OTA matrix runner performs real simulator integration work and is
 separate from the unit test suite. It exercises generated package/attack
 combinations and restores secure baselines; run it only with the local
@@ -322,6 +333,21 @@ setup is documented in [the GCP demo deployment runbook](config/GCP_DEPLOYMENT.m
 including DNS, IAP SSH, firewall ports, and password setup.
 
 This is an authenticated simulator demo, not a hardened production service.
+
+For an existing Git checkout on the VM named `~/Wisdom`, update and rebuild
+from that directory (Linux names are case-sensitive):
+
+```bash
+cd ~/Wisdom &&
+git pull --ff-only origin main &&
+sudo docker compose --profile public-dashboard config -q &&
+sudo docker compose --profile public-dashboard up -d --build &&
+sudo docker compose --profile public-dashboard ps
+```
+
+This assumes the ignored runtime secrets and TLS certificates are already
+configured. The upload-based deployment script instead uses `~/aegisdrive`
+without Git history; follow the runbook for that deployment method.
 
 ## Scope, privacy, and safe use
 

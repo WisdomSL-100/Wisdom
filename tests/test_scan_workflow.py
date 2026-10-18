@@ -199,6 +199,48 @@ class ScanWorkflowTests(unittest.TestCase):
         self.assertNotIn("security_events", result)
         self.assertFalse(result["raw_vehicle_data_shared_with_cloud"])
 
+    def test_repeated_scans_count_new_events_in_a_full_rolling_window(self):
+        for attack_type, category in (
+            ("replay_attack", "replay_detected"),
+            ("spoofing", "invalid_authentication"),
+            ("spoofing", "invalid_authentication"),
+        ):
+            with self.subTest(attack_type=attack_type):
+                before = self.make_snapshot(False)
+                after = self.make_snapshot(True)
+                before["security_events"] = [
+                    {"event_id": f"old-{index}", "category": category}
+                    for index in range(500)
+                ]
+                after["security_events"] = before["security_events"][25:] + [
+                    {"event_id": f"new-{index}", "category": category}
+                    for index in range(25)
+                ]
+                snapshots = iter((before, after))
+
+                def network_request(action, **parameters):
+                    if action == "vehicle_service_state":
+                        return {"service_state": "in_service"}
+                    if action == "snapshot":
+                        return next(snapshots)
+                    if action == "authorized_attack_test":
+                        return {"status": "completed"}
+                    if action in {"scan_activity_phase", "network_diagnostics"}:
+                        return {}
+                    raise AssertionError(action)
+
+                result = run_scan(
+                    network_request, attack_type, "medium", MODEL_STATUS,
+                    duration_seconds=1,
+                    target_node_ids=["private-vehicle-node-0"],
+                )
+                self.assertEqual(result["comparison"]["new_security_event_count"], 25)
+                self.assertEqual(
+                    result["after_attack"]["new_security_event_categories"],
+                    {category: 25},
+                )
+                self.assertNotIn("event_id", repr(result))
+
     def test_scan_reports_ota_weakness_on_target_and_matching_test(self):
         target_id = "private-vehicle-node-0"
         snapshots = iter(
@@ -321,6 +363,53 @@ class ScanWorkflowTests(unittest.TestCase):
                         "medium",
                         {},
                         duration_seconds=duration,
+                    )
+
+    def test_flooding_targets_every_role_in_every_scan_mode(self):
+        for mode in ("service_center_safe", "oem_validation", "lab_penetration_test"):
+            with self.subTest(mode=mode):
+                calls = []
+
+                def network_request(action, **parameters):
+                    if action == "vehicle_service_state":
+                        return {"service_state": "in_service"}
+                    if action == "snapshot":
+                        snapshot = self.make_snapshot(False)
+                        template = snapshot["network_snapshot"]["nodes"][0]
+                        snapshot["network_snapshot"]["nodes"] = [
+                            {**template, "id": f"private-{role}", "role": role}
+                            for role in ("ecu", "zone_controller", "hpc")
+                        ]
+                        return snapshot
+                    if action == "authorized_attack_test":
+                        calls.append(parameters)
+                        return {"status": "completed"}
+                    if action in {"network_diagnostics", "scan_activity_phase"}:
+                        return {}
+                    raise AssertionError(action)
+
+                result = run_scan(
+                    network_request, "flooding", "medium", MODEL_STATUS,
+                    duration_seconds=1, scan_mode=mode,
+                )
+                self.assertEqual(result["status"], "completed")
+                self.assertEqual(
+                    {frame["target_ecu_id"] for frame in calls[0]["attack_frames"]},
+                    {"private-ecu", "private-zone_controller", "private-hpc"},
+                )
+                self.assertTrue(all(
+                    1 <= frame["message_count"] <= 512
+                    for frame in calls[0]["attack_frames"]
+                ))
+
+    def test_safe_mode_still_rejects_dos_and_high_severity_flooding(self):
+        for attack, severity in (("dos", "medium"), ("flooding", "high")):
+            with self.subTest(attack=attack, severity=severity):
+                with self.assertRaises(PermissionError):
+                    run_scan(
+                        lambda action, **parameters: self.fail("Policy must reject before dispatch"),
+                        attack, severity, MODEL_STATUS, duration_seconds=1,
+                        scan_mode="service_center_safe",
                     )
 
 

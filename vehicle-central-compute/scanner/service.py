@@ -1,4 +1,5 @@
 ﻿from datetime import datetime, timezone
+from collections import Counter
 from typing import Any, Callable, Dict
 from uuid import uuid4
 
@@ -25,7 +26,7 @@ CHANGE_POINT_SCORE_THRESHOLD = 0.1
 SCAN_MODES = {
     "service_center_safe": {
         "max_severity": "medium",
-        "blocked_attacks": {"flooding", "dos"},
+        "blocked_attacks": {"dos"},
     },
     "oem_validation": {"max_severity": "critical", "blocked_attacks": set()},
     "lab_penetration_test": {"max_severity": "critical", "blocked_attacks": set()},
@@ -270,6 +271,26 @@ def run_scan(
     after_analysis = summarize_network_phase(
         after_snapshot, after_uds, model_suite
     )
+    before_events = before_snapshot.get("security_events", [])
+    before_event_ids = {
+        event["event_id"]
+        for event in before_events
+        if isinstance(event.get("event_id"), str)
+    }
+    # Snapshot counts saturate at 500; compare event identities, not window sizes.
+    new_event_categories = Counter(
+        event.get("category", "unknown")
+        for event in after_snapshot.get("security_events", [])
+        if (
+            event["event_id"] not in before_event_ids
+            if isinstance(event.get("event_id"), str)
+            else event not in before_events
+        )
+    )
+    after_analysis["new_security_event_categories"] = dict(
+        sorted(new_event_categories.items())
+    )
+    after_analysis["new_security_event_count"] = sum(new_event_categories.values())
     scan_status = attack.get("status", "unknown")
     _apply_ota_weakness_assessment(
         after_analysis,
@@ -295,11 +316,7 @@ def run_scan(
         "risk_increased": (
             after_analysis["anomaly_score"] > before_analysis["anomaly_score"]
         ),
-        "new_security_event_count": max(
-            0,
-            after_analysis["security_event_count"]
-            - before_analysis["security_event_count"],
-        ),
+        "new_security_event_count": after_analysis["new_security_event_count"],
         "new_active_dtc_count": max(
             0,
             after_analysis["active_dtc_count"]

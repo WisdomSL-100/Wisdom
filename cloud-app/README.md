@@ -13,6 +13,15 @@ This container orchestrates authorized simulator scans, retrieves aggregate evid
   SBOM component matching at `/api/cves/match`.
 - Expose audience-specific reports through `/api/report/latest` and
   `/api/report/<scan_id>` using `owner`, `technician`, or `oem` audiences.
+- Generate deterministic explanations from a bundled reference corpus, with
+  optional Gemini text generation when `GEMINI_API_KEY` is configured.
+- Preserve scan-local new-event aggregates in history and report evidence so
+  repeated attacks remain visible when rolling event-window counts saturate.
+
+Bounded simulator flooding is allowed in every assessment mode and for every
+registered node. Service-center safe still caps severity at medium and blocks
+the separate `dos` scenario. The cloud and Central Compute independently apply
+the mode policy and in-service gate.
 
 The CVE catalog is intentionally local and bounded for the simulator. NVD
 synchronization requires outbound internet access and should be scheduled and

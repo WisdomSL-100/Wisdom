@@ -94,6 +94,7 @@ PHASE_COUNT_FIELDS = {
     "observed_interface_counts",
     "security_event_categories",
     "security_event_severities",
+    "new_security_event_categories",
 }
 DURING_FIELDS = {
     "sample_window_seconds",
@@ -138,6 +139,8 @@ PHASE_FIELDS = {
     "active_dtc_count",
     "behavior_variation_count",
     "security_event_count",
+    "new_security_event_count",
+    "new_security_event_categories",
     "sampled_message_count",
     "sampled_message_rate_per_second",
     "inter_arrival_ms_mean",
@@ -371,30 +374,37 @@ def _fallback_report(scan: Dict[str, Any], references: List[Dict[str, Any]]) -> 
         and isinstance(finding.get("weakness_id"), str)
         and isinstance(finding.get("title"), str)
     ] if isinstance(ota_findings, list) else []
-    if specific_findings:
-        issue_details = ["Specific OTA weaknesses: " + "; ".join(specific_findings)]
-    else:
-        categories = after.get("security_event_categories", {})
-        before_categories = before.get("security_event_categories", {})
-        event_details = []
-        if isinstance(categories, dict):
-            for category, count in sorted(categories.items()):
-                if not isinstance(category, str) or type(count) is not int:
-                    continue
-                previous_count = (
-                    before_categories.get(category, 0)
-                    if isinstance(before_categories, dict)
-                    else 0
-                )
-                delta = max(0, count - (previous_count if type(previous_count) is int else 0))
-                if delta:
-                    event_details.append(f"{category.replace('_', ' ')} ({delta})")
-        issue_details = (
-            ["New security events: " + "; ".join(event_details)]
-            if event_details
-            else [
-                "No OTA weakness or new security event was identified in the aggregate evidence."
-            ]
+    issue_details = (
+        ["Specific OTA weaknesses: " + "; ".join(specific_findings)]
+        if specific_findings else []
+    )
+    scan_categories = after.get("new_security_event_categories")
+    categories = (
+        scan_categories if isinstance(scan_categories, dict)
+        else after.get("security_event_categories", {})
+    )
+    before_categories = (
+        {} if isinstance(scan_categories, dict)
+        else before.get("security_event_categories", {})
+    )
+    event_details = []
+    if isinstance(categories, dict):
+        for category, count in sorted(categories.items()):
+            if not isinstance(category, str) or type(count) is not int:
+                continue
+            previous_count = (
+                before_categories.get(category, 0)
+                if isinstance(before_categories, dict)
+                else 0
+            )
+            delta = max(0, count - (previous_count if type(previous_count) is int else 0))
+            if delta:
+                event_details.append(f"{category.replace('_', ' ')} ({delta})")
+    if event_details:
+        issue_details.append("New security events: " + "; ".join(event_details))
+    if not issue_details:
+        issue_details.append(
+            "No OTA weakness or new security event was identified in the aggregate evidence."
         )
     for field, label in (
         ("uds_failed_count", "UDS diagnostic failures"),

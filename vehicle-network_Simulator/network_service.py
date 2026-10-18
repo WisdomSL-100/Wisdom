@@ -94,7 +94,7 @@ SERVICE_STATE_LOCK = threading.Lock()
 if VEHICLE_SERVICE_STATE not in VEHICLE_SERVICE_STATES:
     raise ValueError("VEHICLE_SERVICE_STATE must be in_service or out_of_service")
 AUTHORIZED_TEST_SCENARIOS = {
-    "flooding": {"zones": ["front_left", "rear_left"], "domains": [], "roles": ["zone_controller"]},
+    "flooding": {"zones": [], "domains": [], "roles": ["ecu", "zone_controller", "hpc"]},
     "replay_attack": {"zones": [], "domains": ["powertrain", "adas_camera", "adas_radar"], "roles": []},
     "repudiation": {"zones": [], "domains": ["telematics", "cockpit_compute"], "roles": []},
     "dos": {"zones": ["front_right", "rear_left"], "domains": ["vehicle_backbone"], "roles": ["hpc"]},

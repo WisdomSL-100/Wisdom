@@ -4,14 +4,32 @@ This document is the single source of truth for the project architecture and fol
 
 ## System Overview
 
-The project implements an automotive cybersecurity scanner and behavior-analysis platform with four runtime containers:
+The project implements an automotive cybersecurity scanner and behavior-analysis platform with four application layers:
 
 1. Frontend dashboard container
 2. Cloud application container
 3. Vehicle central compute container
-4. Vehicle network container
+4. Vehicle-network aggregate service and 15 separate simulated node containers
 
-The shared configuration folder is not a runtime container; it provides deployment and environment support for the four services.
+Compose runs 19 containers by default: frontend, cloud app, central compute,
+vehicle-network aggregate, and 15 vehicle nodes. The optional `public-dashboard`
+profile adds Caddy as a twentieth container for HTTPS and authentication.
+The shared configuration folder is not a runtime container.
+
+```mermaid
+flowchart LR
+    User[Browser] -->|HTTPS and Basic Auth in public deployment| Proxy[Caddy]
+    Proxy --> Frontend[Frontend dashboard]
+    Frontend -->|HTTP JSON| Cloud[Cloud app and encrypted history]
+    Cloud -->|mTLS and short-lived JWT| Central[Central Compute]
+    Central -->|HMAC-authenticated TCP| Aggregate[Vehicle-network aggregate]
+    Central -->|Target-specific authenticated sockets| Nodes[15 ECU / ZCU / HPC containers]
+    Aggregate -->|Snapshot polling| Nodes
+    Nodes -->|Simulated CAN and controller links| Nodes
+```
+
+Local development can access the frontend directly on loopback port `3000`
+without Caddy. Protocol-shaped traffic is simulator-only, never physical CAN.
 
 ## Container Responsibilities
 
@@ -39,7 +57,7 @@ Responsibilities:
 - Start scanner jobs in central compute
 - Retrieve telemetry, attack outcomes, and security events
 - Correlate data across sessions and incidents
-- Use Gemini + RAG for analysis, summarization, and report generation
+- Generate deterministic reports using a bundled reference corpus, with optional Gemini text generation when configured
 
 ### 3. Vehicle Central Compute Container
 Purpose:
@@ -59,7 +77,7 @@ Responsibilities:
   - other vehicle-network security tests
 - Collect network diagnostics, ECU behavior, DTC catalogs, and security events from the socket feed
 - Analyze traffic using Isolation Forest against the pre-scan behavior baseline
-- Detect anomalies, classify threats, and identify compromises
+- Detect modeled anomalies and classify risk; simulator findings do not establish a real compromise
 - Return aggregate findings to the cloud application; keep raw node diagnostics, signal values, and message/event records out of cloud scan history
 
 ### 4. Vehicle Network Container
@@ -82,7 +100,7 @@ Responsibilities:
 - Safety-critical radar and camera ECUs connect directly to `hpc-adas`.
 - Non-safety body and telematics ECUs connect to their local ZCU.
 - Every ZCU forwards its zone data to `hpc-vehicle` for whole-vehicle aggregation, and to relevant ADAS/cockpit domain HPCs.
-- The domain HPCs and central gateway share the Automotive Ethernet backbone.
+- The domain HPCs and vehicle HPC share the modeled Automotive Ethernet backbone.
 - `hpc-vehicle` behavior/state is hosted by the live simulator node `hpc_vehicle_node.py`. The separate central-compute `hpc_vehicle_model.py` is a companion model, not another live node; central compute is not itself modeled as an ECU.
 
 ### Shared Configuration and Deployment Folder
@@ -101,12 +119,20 @@ Responsibilities:
 
 1. The dashboard selects an attack scenario, severity, simulated duration (1-60 seconds), and vehicle service state.
 2. Central compute rejects scans unless the simulator reports `in_service`.
-3. Central compute runs full-network SOVD-style DTC diagnostics and collects a pre-test behavior baseline.
-4. The authenticated simulator socket runs a bounded, whitelisted simulation test; general untrusted frame injection remains disabled.
+3. Central compute collects a pre-test behavior snapshot and, when baseline checks are enabled, full-network SOVD-style DTC diagnostics.
+4. Central compute supplies bounded test plans to the authenticated simulator. The simulator sends protocol-shaped frames or diagnostic/firmware probes to node handlers; optional baseline protocol probes run first. General untrusted frame injection remains disabled.
 5. Central compute repeats diagnostics and behavior analysis, then returns aggregate counts, category totals, risk scores, and before/after deltas.
 6. The cloud persists only allowlisted analytics; raw network snapshots, identifiers, signals, and per-node records are filtered from new and historical scan responses.
 
 The service state defaults to `out_of_service`. Central-compute scan/API, scenario, and socket-client code is organized under `scanner/`; scoring is under `behavior_analysis/`; OTA relay logic is under `ota_client/`. This design minimizes cloud data but does not, by itself, establish legal compliance; deployment owners remain responsible for DPDP obligations, access controls, and retention policy.
+
+Flooding supports all simulated ECU, ZCU, and HPC nodes in every mode.
+`service_center_safe` retains its medium-severity ceiling and blocks the
+separate `dos` scenario. All tests retain the 1-60 second bound, in-service
+gate, and Stop control. New observed security events are identified against
+the pre-test snapshot by event identity, avoiding count-delta errors when the
+500-record snapshot window fills. Only aggregate counts/categories leave
+Central Compute; counts cannot include new events already evicted from that window.
 
 ## Folder Mapping
 
@@ -114,8 +140,8 @@ The service state defaults to `out_of_service`. Central-compute scan/API, scenar
 automotive-cybersecurity-scanner/
 ├── frontend/                  # Container 1: dashboard and UI layer
 ├── cloud-app/                 # Container 2: cloud orchestration, API, AI, incident correlation
-├── vehicle-central-compute/    # Container 3: vehicle HPC, scanner, behavior analysis, OTA client
-├── vehicle-network_Simulator/  # Container 4: simulated vehicle network, ECUs, sockets, traffic
+├── vehicle-central-compute/    # Scan orchestration, behavior analysis, OTA relay
+├── vehicle-network_Simulator/  # Aggregate service and 15 live simulated node services
 ├── config/                    # Shared config and deployment support (not a runtime container)
 ├── docker-compose.yml
 ├── README.md
@@ -136,13 +162,24 @@ automotive-cybersecurity-scanner/
 
 ## Implementation Status
 
-The simulator is modeled as 15 nodes: three HPCs (two local domain HPCs plus the vehicle-HPC proxy), four ZCUs, and eight functional ECUs. Each node has a module with topology, message, UDS-service, security-feature, and DTC metadata. The central-compute vehicle-HPC aggregate includes all four ZCUs and all eight zone ECUs; five safety-critical ECUs also have direct HPC links.
+The simulator has 15 nodes: three live HPCs, four ZCUs, and eight functional
+ECUs. Each node has topology, message, UDS-service, security-feature, and DTC
+metadata and owns its runtime state in its own container. The live
+`hpc-vehicle` aggregates all four ZCUs and the eight ECUs through zone, direct,
+and HPC-peer routes; five safety-critical ECUs have direct HPC links.
 
 Each ECU, ZCU, and HPC node container exposes its authenticated node TCP socket on port `6001`; the central `vehicle-network` service also exposes a separate aggregate socket on port `6001` for network-wide snapshots and read/diagnostic requests. ZCU and HPC node containers expose their controller CAN/CAN-FD socket on port `6003`. Controllers use a dedicated authenticated ZCU-HPC TCP link on port `6004`, and HPCs expose a separate Cloud-HPC service socket on port `6005`. Safety-critical ECUs attach directly to their HPC CAN socket; non-safety local ECUs attach to their owning ZCU CAN socket. These are simulated TCP sockets carrying authenticated protocol-shaped frame envelopes, not physical CAN interfaces. Set `VEHICLE_SOCKET_SECRET` to a random value at least 32 characters long in the environment; do not commit it. HMAC authenticates and protects integrity but does not encrypt the payload. Use a TLS/mTLS layer before deployment on an untrusted network.
 
 OTA requests enter through Cloud App `/api/ota/flash`, Central Compute `/ota/flash`, and the authenticated vehicle-network socket. Each target node validates its own package and topology route, runs its UDS programming sequence, or stages and switches its inactive HPC A/B partition. The network service supplies only the topology registry and authenticated CAN/DoIP socket transport for routed diagnostic requests; it does not execute the OTA workflow or apply node software profiles. A signed manifest can activate an allowlisted, target-node-only `software_profile` to simulate changes to SecurityAccess, authentication, replay/freshness, rate/timing, range/message-ID validation, diagnostic authorization, zonal segmentation, firmware-signature/downgrade policy, IDS logging, or signal values. Protections default to enabled; firmware-signature and anti-downgrade enforcement use the node's currently installed profile. Profile state and IDS counters feed the per-node behavior features so OTA changes remain visible even before a message-level violation occurs. The firmware image is hash-checked as data and never executed; none of these operations flashes physical hardware.
 
-Socket data is simulated baseline metadata, not measurements from a real vehicle. UDS services and DTCs are simulated per node, with the vehicle-HPC's UDS state hosted by central compute. ECU diagnostic sessions and firmware transfer are simulator-only; no hardware flash is performed. Attack injection remains disabled by the simulator; attack plans belong to central compute. Isolation Forest behavior scoring is active in central compute; Gemini, RAG, persistent incident correlation, and real CAN/CAN-FD/Ethernet interfaces remain future integrations.
+Socket data is simulated runtime activity, not measurements from a real vehicle.
+UDS state and DTCs belong to the corresponding simulator nodes, including the
+vehicle HPC. Diagnostic sessions and firmware transfer are simulator-only; no
+hardware flash is performed. Authorized bounded tests execute against simulator
+handlers using plans from Central Compute; arbitrary `inject_frames` requests
+remain disabled. Isolation Forest scoring, persistent scan history, deterministic
+reference-grounded reports, and optional Gemini generation are implemented.
+Production incident correlation and real CAN/CAN-FD/Ethernet interfaces are not.
 
 Scan history is persisted in SQLite and retained in a Docker named volume; the cloud API and dashboard can retrieve records after a service restart. The Flask development debugger is disabled by default.
 

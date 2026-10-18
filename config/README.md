@@ -9,6 +9,8 @@ This folder stores deployment configuration and model settings used by the conta
 - bootstrap_dev_security.sh: creates local development mTLS certificates, the cloud-central JWT secret, and ignored runtime secrets for Docker Compose
 - deploy_compute_engine.sh: deploys the complete simulator stack to one Google Compute Engine VM
 - GCP_DEPLOYMENT.md: Google Cloud account setup, deployment, operations, and teardown instructions
+- setup_dashboard_auth.sh: privately prompts for dashboard hostname and credentials, validates Caddy, and starts the public profile
+- Caddyfile: HTTPS reverse proxy and Basic Auth for the shared dashboard
 
 Do not commit generated `.env` values or `tls/` private keys. Development credentials are not suitable for production. If WSL reports that the project filesystem cannot apply POSIX permissions, restrict `.env` and private keys with host OS ACLs. Set an approved cloud region and retention period for the deployment before use.
 

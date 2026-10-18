@@ -73,7 +73,7 @@ ATTACK_LIBRARY: List[str] = [
 ]
 SEVERITIES = {"low", "medium", "high", "critical"}
 SCAN_MODES = {
-    "service_center_safe": {"max_severity": "medium", "blocked_attacks": {"flooding", "dos"}},
+    "service_center_safe": {"max_severity": "medium", "blocked_attacks": {"dos"}},
     "oem_validation": {"max_severity": "critical", "blocked_attacks": set()},
     "lab_penetration_test": {"max_severity": "critical", "blocked_attacks": set()},
 }
@@ -96,6 +96,8 @@ PHASE_FIELDS = {
     "security_event_count",
     "security_event_categories",
     "security_event_severities",
+    "new_security_event_count",
+    "new_security_event_categories",
     "ecu_family_counts",
     "ecu_software_version_counts",
     "gateway_configuration_version",
@@ -147,6 +149,7 @@ COMPARISON_FIELDS = {
     "change_point_threshold",
 }
 COUNT_MAP_FIELDS = {
+    "new_security_event_categories",
     "security_event_categories",
     "security_event_severities",
     "ecu_family_counts",
@@ -502,6 +505,7 @@ def privacy_safe_scan(scan: Dict[str, Any]) -> Dict[str, Any]:
                         if isinstance(category, str) and type(count) is int
                     }
             for count_field in (
+                "new_security_event_count",
                 "ota_weakness_count",
                 "ota_tested_weakness_count",
             ):

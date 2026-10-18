@@ -297,7 +297,7 @@
                 <option value="oem_validation">OEM validation</option>
                 <option value="lab_penetration_test" selected>Lab penetration test</option>
               </select>
-              <details class="service-help"><summary>About assessment modes</summary><p>Service-center safe blocks flooding/DoS and high or critical severity.</p></details>
+              <details class="service-help"><summary>About assessment modes</summary><p>Bounded simulator flooding is available for every node in all modes. Service-center safe still blocks the separate DoS scenario and high or critical severity.</p></details>
             </div>
             <div class="inline-controls">
               <div class="control">
@@ -949,7 +949,7 @@
 
     function scanPolicyMessage(attackType, severity, scanMode) {
       if (scanMode === 'service_center_safe') {
-        if (['flooding', 'dos'].includes(attackType)) {
+        if (attackType === 'dos') {
           return `${attackLabels[attackType] || attackType} is blocked in Service-center safe mode. Choose another scenario, or select OEM validation / Lab penetration test for an authorized simulator test.`;
         }
         if (['high', 'critical'].includes(severity)) {
@@ -981,7 +981,7 @@
       });
       [...attackSelect.options].forEach(option => {
         option.disabled = scanMode === 'service_center_safe'
-          && ['flooding', 'dos'].includes(option.value);
+          && option.value === 'dos';
       });
       const severity = document.getElementById('severity');
       if (maximumRank >= 0 && severityRank[severity.value] > maximumRank) {
@@ -1640,6 +1640,12 @@
     }
 
     function newSecurityEventCounts(before, after) {
+      if (after.new_security_event_categories) {
+        return Object.fromEntries(
+          Object.entries(after.new_security_event_categories)
+            .filter(([, count]) => Number(count) > 0)
+        );
+      }
       const beforeCategories = before.security_event_categories || {};
       const afterCategories = after.security_event_categories || {};
       const counts = Object.fromEntries(
@@ -1675,26 +1681,17 @@
       const findings = Array.isArray(phase.ota_weakness_findings)
         ? phase.ota_weakness_findings
         : [];
-      if (findings.length) {
-        renderPie(
-          'post-attack-pie',
-          'post-attack-legend',
-          findings.map(finding => ({
-            label: `${finding.weakness_id} · ${finding.title}`,
-            value: Math.max(1, Number(finding.affected_target_count) || 0)
-          })),
-          'weaknesses'
-        );
-        return;
-      }
-
       const eventCounts = newSecurityEventCounts(before, phase);
-      const eventEntries = Object.entries(eventCounts).map(
+      const eventEntries = findings.map(finding => ({
+        label: `${finding.weakness_id} · ${finding.title} (affected targets)`,
+        value: Math.max(1, Number(finding.affected_target_count) || 0)
+      }));
+      eventEntries.push(...Object.entries(eventCounts).map(
         ([category, count]) => ({
           label: securityEventLabels[category] || category.replaceAll('_', ' '),
           value: count
         })
-      );
+      ));
       const attackStatus = scan.attack_summary?.status || scan.status;
       if (attackStatus && attackStatus !== 'completed') {
         eventEntries.push({
@@ -1720,7 +1717,7 @@
           'post-attack-pie',
           'post-attack-legend',
           eventEntries,
-          'issues'
+          findings.length ? 'findings / events' : 'issues'
         );
         return;
       }
@@ -1969,7 +1966,52 @@
       }
     }
 
+    function renderOutcomeCards(scan) {
+      const setCard = (id, title, detail) => {
+        const card = document.getElementById(id);
+        card.querySelector('strong').textContent = title;
+        card.querySelector('p').textContent = detail;
+      };
+      const riskCard = document.getElementById('outcome-risk');
+      riskCard.classList.toggle('risk-high', Boolean(
+        scan && ['high', 'critical'].includes(scan.risk_level || scan.after_attack?.risk_level)
+      ));
+      if (!scan) {
+        setCard('outcome-decision', 'Awaiting assessment', 'Run a safe scan to create a decision-ready result.');
+        setCard('outcome-risk', 'Unknown', 'Behavior analysis has not run.');
+        setCard('outcome-scope', 'Not selected', 'Select one or more ECU, ZCU, or HPC nodes.');
+        setCard('outcome-action', 'Choose an OTA or scan', 'Use the guided demo path below.');
+        return;
+      }
+      const after = scan.after_attack || {};
+      const status = scan.attack_summary?.status || scan.scan_status || scan.status || 'unknown';
+      const risk = scan.risk_level || after.risk_level || 'unknown';
+      const targets = scan.target_summary?.target_node_ids || [];
+      const findings = after.ota_weakness_findings || [];
+      const eventCount = Object.values(newSecurityEventCounts(scan.before_attack || {}, after))
+        .reduce((total, count) => total + Number(count), 0);
+      const reviewRequired = findings.length > 0 || eventCount > 0
+        || ['high', 'critical'].includes(risk);
+      setCard(
+        'outcome-decision',
+        status !== 'completed' ? 'Assessment incomplete' : reviewRequired ? 'Review findings' : 'Assessment recorded',
+        `${(scan.attack_type || 'security test').replaceAll('_', ' ')}: ${status.replaceAll('_', ' ')} · ${eventCount} new observed security event(s).`
+      );
+      setCard('outcome-risk', risk.charAt(0).toUpperCase() + risk.slice(1), after.summary || scan.summary || 'Post-attack risk assessment.');
+      setCard(
+        'outcome-scope',
+        `${targets.length || scan.target_summary?.target_count || 0} target(s)`,
+        targets.length ? targets.map(node => node.replaceAll('-', ' ')).join(', ') : 'Target names were not retained.'
+      );
+      setCard(
+        'outcome-action',
+        status !== 'completed' ? 'Review execution failure' : reviewRequired ? 'Review and remediate' : 'Review the report',
+        scan.threat_report?.recommendations?.[0] || 'Download the current assessment report and review the evidence before approval.'
+      );
+    }
+
     function renderAnalytics(scan) {
+      renderOutcomeCards(scan);
       const metrics = document.getElementById('analytics-metrics');
       metrics.replaceChildren();
       const exportButtons = [

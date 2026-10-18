@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 
 ATTACK_SCENARIOS: Dict[str, Dict[str, List[str]]] = {
-    "flooding": {"zones": ["front_left", "rear_left"], "domains": [], "roles": ["zone_controller"]},
+    "flooding": {"zones": [], "domains": [], "roles": ["ecu", "zone_controller", "hpc"]},
     "replay_attack": {"zones": [], "domains": ["powertrain", "adas_camera", "adas_radar"], "roles": []},
     "repudiation": {"zones": [], "domains": ["telematics", "cockpit_compute"], "roles": []},
     "dos": {"zones": ["front_right", "rear_left"], "domains": ["vehicle_backbone"], "roles": ["hpc"]},

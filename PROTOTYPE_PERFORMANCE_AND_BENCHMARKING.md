@@ -89,4 +89,12 @@ The service state was `in_service` before and after testing. The stack was reach
 
 ## Provenance
 
-Counts above are taken from the project’s saved full OTA matrix result (`ota-matrix-full.json`) and its runner (`tests/run_ota_matrix.py`). The matrix uses isolated simulator test workers and restores a secure baseline after testing each target.
+Counts above are historical results reported from a saved full OTA matrix
+result (`ota-matrix-full.json`) and its runner (`tests/run_ota_matrix.py`).
+The raw result and browser timing captures are not included in this repository,
+so readers cannot independently audit those historical figures from this
+checkout alone. They have not been rerun as a benchmark of the current commit.
+The checked-in runner enables a new matrix run; it uses isolated simulator
+workers and restores a secure baseline after testing each target. Retain the
+result JSON, commit ID, and runtime configuration with any new submission
+benchmark evidence.

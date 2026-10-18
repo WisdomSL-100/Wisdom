@@ -17,10 +17,17 @@ The node set consists of eight ECUs, four ZCUs, and three HPCs. Compose exposes 
 
 The dashboard's **Network sockets** cards show the four monitored paths: ZCU CAN, HPC CAN, HPC-ZCU TCP, and Cloud-HPC TCP. The live activity log shows accepted/dropped frames, CAN ID, DLC, payload hex, UDS segmentation and total message length, SOME/IP service/method and packet length, scan phase, and rejection reason. Socket events are tagged with attack/diagnostic phase and can be filtered by any of these four links.
 
-The bounded protocol probes submit malformed/replayed/out-of-range CAN messages through the controller CAN sockets, where node-side validation records whether they were accepted or dropped. The separate timed authorized attack scenario remains a simulation marker; it does not inject an attack payload or transmit physical bus traffic. These are simulator TCP sockets carrying protocol-shaped frames, not physical CAN interfaces.
+The bounded protocol probes submit malformed/replayed/out-of-range CAN messages through the controller CAN sockets, where node-side validation records whether they were accepted or dropped. Timed authorized tests send bounded protocol-shaped frames or diagnostic/firmware probes through the selected simulator handlers and record accepted/dropped outcomes. These are simulator TCP sockets, not physical CAN interfaces; no traffic is sent to a real vehicle.
 
 ## Simulation and testing
 
 Networking, diagnostics, and firmware updates are simulated. The simulator does not communicate with physical ECUs or vehicle buses, and OTA is not hardware flashing. The simulated UDS download sequence can include `0x10`, `0x27`, `0x34`, `0x36`, and `0x37`; it represents protocol activity, not a real firmware transfer.
 
 The vehicle service state starts as `out_of_service` (or can be set with `VEHICLE_SERVICE_STATE`). Authorized security tests require `in_service`. Probe suites exercise simulated protocol handlers and return aggregate scan results; the general `inject_frames` action remains disabled.
+
+The bounded flooding scenario supports every registered ECU, ZCU, and HPC.
+Explicit target IDs limit execution to those nodes; the default flooding
+scenario covers all nodes. All assessment modes permit flooding, with
+Service-center safe retaining its medium-severity ceiling and separate DoS
+restriction. Node-side protections remain enabled: drops and security events
+are valid resilience-test effects, not a reason to bypass those protections.

@@ -39,6 +39,37 @@ class ThreatExplainerTests(unittest.TestCase):
         self.assertTrue(any("CWE-400" in item for item in report["evidence_citations"]))
         self.assertTrue(any("does not query a live" in item for item in report["limitations"]))
 
+    def test_scan_local_events_are_reported_alongside_unchanged_ota_weaknesses(self):
+        report = self.explainer.create_threat_report({
+            "attack_type": "spoofing", "risk_level": "high",
+            "before_attack": {
+                "security_event_categories": {"invalid_authentication": 500},
+            },
+            "after_attack": {
+                "security_event_categories": {"invalid_authentication": 500},
+                "new_security_event_categories": {"invalid_authentication": 25},
+                "ota_weakness_findings": [{
+                    "weakness_id": "W1", "title": "Replay protection disabled",
+                }],
+            },
+        })
+        serialized = json.dumps(report)
+        self.assertIn("invalid authentication (25)", serialized)
+        self.assertIn("Replay protection disabled", serialized)
+
+    def test_minimized_evidence_preserves_scan_local_event_aggregates(self):
+        evidence = self.explainer.minimized_evidence({
+            "after_attack": {
+                "new_security_event_count": 25,
+                "new_security_event_categories": {"invalid_authentication": 25},
+                "security_events": [{"event_id": "private-event"}],
+            },
+        })
+        self.assertEqual(evidence["after_attack"], {
+            "new_security_event_count": 25,
+            "new_security_event_categories": {"invalid_authentication": 25},
+        })
+
     def test_minimized_evidence_excludes_direct_identifiers_and_raw_payloads(self):
         evidence = self.explainer.minimized_evidence(
             {

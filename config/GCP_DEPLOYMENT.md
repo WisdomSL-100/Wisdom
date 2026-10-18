@@ -149,6 +149,30 @@ installing the project locally.
 
 ## Operations
 
+### Updating an existing Git checkout on the VM
+
+If the project was cloned directly on the VM into `~/Wisdom`, update it there:
+
+```bash
+cd ~/Wisdom &&
+git pull --ff-only origin main &&
+git rev-parse --short HEAD &&
+sudo docker compose --profile public-dashboard config -q &&
+sudo docker compose --profile public-dashboard up -d --build &&
+sudo docker compose --profile public-dashboard ps
+```
+
+Preserve the existing ignored `.env` and `config/tls/` files. Hard-refresh the
+browser after rebuilding. `Wisdom` is case-sensitive; `Wsidom` is a different
+name. This workflow is different from the upload-script deployment below.
+
+### Operating the upload-script deployment
+
+The script uploads a source archive to `~/aegisdrive` and excludes `.git`.
+Do not run `git pull` there. To update it, pull in the Cloud Shell `~/Wisdom`
+checkout, rerun the deployment script with the actual project/zone/instance,
+then rebuild the stack on the VM.
+
 Run from Cloud Shell:
 
 ```bash

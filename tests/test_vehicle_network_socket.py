@@ -1225,6 +1225,43 @@ class VehicleNetworkSocketTests(unittest.TestCase):
                 self.network.SECURITY_PROFILE_PATH = previous_path
                 self.network.NODE_SECURITY_PROFILES[node_id] = original
 
+    def test_flooding_is_executable_on_every_registered_node(self):
+        from scanner.attack_engine import create_attack_frames
+
+        self.network.VEHICLE_SERVICE_STATE = "in_service"
+        topology = self.network.build_topology()
+        default_frames = create_attack_frames("flooding", "low", topology)
+        self.assertEqual(
+            {frame["target_ecu_id"] for frame in default_frames},
+            set(self.network.NODES),
+        )
+        self.assertTrue(all(
+            self.network._scenario_matches_node(
+                node_id, self.network.AUTHORIZED_TEST_SCENARIOS["flooding"]
+            )
+            for node_id in self.network.NODES
+        ))
+        for node_id in self.network.NODES:
+            with self.subTest(node=node_id):
+                frames = create_attack_frames("flooding", "low", topology, [node_id])
+                result = self.network.run_authorized_attack_test({
+                    "authorized_simulation": True,
+                    "attack_type": "flooding",
+                    "severity": "low",
+                    "duration_seconds": 1,
+                    "target_node_ids": [node_id],
+                    "attack_frames": frames,
+                    "run_protocol_probes": False,
+                })
+                self.assertEqual(result["status"], "completed")
+                self.assertEqual(result["affected_node_count"], 1)
+                self.assertGreater(result["attack_frame_count"], 0)
+                self.assertGreater(result["dropped_frame_count"], 0)
+                self.assertEqual(
+                    result["accepted_frame_count"] + result["dropped_frame_count"],
+                    result["attack_frame_count"],
+                )
+
     def test_operator_selected_targets_are_the_only_attack_targets(self):
         target_node_id = "zcu-front-left"
         self.network.VEHICLE_SERVICE_STATE = "in_service"
