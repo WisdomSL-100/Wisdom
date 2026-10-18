@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a0651eebe55cb97d5cc57c30799c4d5414d974cbe5d82adb7867d03302a1beb3e",
+  "manifest": {
+    "ecu_id": "zcu-front-right",
+    "image_size": 58,
+    "sha256": "566744326f9274ea7036cb851403ce8b8400ff1009dc615d58379416c6703a61",
+    "signature": "2e64ed1f9ef8be27ec24ecee8829afedd4438ab23f2ba1cdc5fe8eb6e5a89351",
+    "software_profile": {
+      "anti_downgrade": false,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W9 - Firmware downgrade protection - zcu-front-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-front-right"
+}

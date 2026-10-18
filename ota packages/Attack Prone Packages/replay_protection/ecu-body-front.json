@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a3c57b6c38539e6431c54d7be5624d88a725040279e91753f962954e174c985a4",
+  "manifest": {
+    "ecu_id": "ecu-body-front",
+    "image_size": 58,
+    "sha256": "0e906fc70f98ee1d01857f13296b7f3119038f60186c423b442e226c769d2bad",
+    "signature": "8ccce84a441273fca3ea598589fb24768d070178c0b5445130c1a74d45270d3f",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": false,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Replay validation - ecu-body-front",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-front",
+  "zcu_id": "zcu-front-right"
+}

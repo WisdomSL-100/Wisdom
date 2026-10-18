@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313abbe74609fe93b03bf43a6465c96e46998c36aa2ef9d224d2e591bda0c59977a9",
+  "manifest": {
+    "ecu_id": "ecu-powertrain",
+    "image_size": 58,
+    "sha256": "03f4c8f644f41947640d4a0f6baa43be00032ea067d661ffa2fabeba5daccaf2",
+    "signature": "763635ae8e59d8b4545e646b1a71093e24c40c32e7787d242503a538a544be13",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": false,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W2 - Message ID validation - ecu-powertrain",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-powertrain"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a89cb31772fe6e77ee7c71b90a9618282246698435af911855c6ec3052d90e4cb",
+  "manifest": {
+    "ecu_id": "ecu-front-camera",
+    "image_size": 58,
+    "sha256": "61321988151a60cc3fb766689deb978cce436ec8699f7cf89f70c6a2000759a9",
+    "signature": "36d758810818380cab8c6e627a10bb8e2345701558a205a4112671f006275166",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "BASELINE - Secure profile - ecu-front-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-front-camera"
+}

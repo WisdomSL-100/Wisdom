@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a86ef8a8978bdfdad553f47e6e7cde2eba32037cc6a36dbf5753434f17a72f617",
+  "manifest": {
+    "ecu_id": "ecu-adas-radar",
+    "image_size": 58,
+    "sha256": "b79051a5303385ae70688ec370da07d35395b98a14b7f217238c4da599c39f90",
+    "signature": "3011faac536a2d5afd9ff94e0a5ad6bce84ed80c76c4251ceb9d1f36d98fbecc",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": false,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W6 - Data range validation - ecu-adas-radar",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-adas-radar"
+}

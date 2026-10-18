@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a2d7c5d2ac12486e5c65594c2987ad6db4daa57b826bf83659162fd372bc74954",
+  "manifest": {
+    "ecu_id": "ecu-adas-radar",
+    "image_size": 58,
+    "sha256": "547a5082fd780b0cd20ce329114df1444872f8b8c1123949f430d8e34e2a9e2f",
+    "signature": "77ca9d60e85a44e1ba150ce8e75e8b6c9d1502fb93f4c2c3ac7cb9c54985b2d0",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - ecu-adas-radar",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-adas-radar"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a1c6f623a2bd94c7b03f01fba685cb6dcc3d203131787af8ddc7f1223ef3f0ba4",
+  "manifest": {
+    "ecu_id": "zcu-front-right",
+    "image_size": 58,
+    "sha256": "d20c586ebf54e9bc39952a3b2bace0728877c22e2403dc1c4eccb6812ccffb17",
+    "signature": "9b4ce26cc6b6699f32f0c7841b77b289302aa433a610ad646674b59e295d06bc",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": false,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W10 - IDS detection / audit logging - zcu-front-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-front-right"
+}

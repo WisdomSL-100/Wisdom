@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aa462d8581aa0f342bbe0e7a6d70ac6a08fb1600f220bebc22eb670ffbca69bba",
+  "manifest": {
+    "ecu_id": "ecu-front-camera",
+    "image_size": 58,
+    "sha256": "3e7f0bc14c81505f540043185b5728e7ad573e90d4b419d9b9491c2963411281",
+    "signature": "96dc5ac1693d458b070df2e3b7689fc4da18a3dcec02b8c174f08aff468960db",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": false,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W3 - Unauthorized diagnostic access - ecu-front-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-front-camera"
+}

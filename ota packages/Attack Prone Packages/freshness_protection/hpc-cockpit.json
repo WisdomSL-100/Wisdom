@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a9c884132c64aafa9e9fbd5308aaf8018ffaea5a7f8c858015abf1b0bc3f7a306",
+  "manifest": {
+    "ecu_id": "hpc-cockpit",
+    "image_size": 58,
+    "sha256": "731fa061b9d30330d04a444781f308e831ada4200dfb33e4155d85dbacb604bd",
+    "signature": "d4791043ecd0597ac6c7e17f72f91db276c86fe66a2a1f4276d750efefbc45e3",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": false,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Freshness validation - hpc-cockpit",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-cockpit"
+}

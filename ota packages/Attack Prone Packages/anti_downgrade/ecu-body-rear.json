@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a51d4cf9336f9542a054b329d94fc403ee1c21873e516e94f7dd8fe3c2bd998ff",
+  "manifest": {
+    "ecu_id": "ecu-body-rear",
+    "image_size": 58,
+    "sha256": "f1f68394d5a5b393e899fd39de7e85b7dc8c28f82761aadd79563eba22482c0e",
+    "signature": "81bcb6fdae04d47ef985a2ee784275df1c7f9cd06f0de1c319c56ed2fb723873",
+    "software_profile": {
+      "anti_downgrade": false,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W9 - Firmware downgrade protection - ecu-body-rear",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-rear",
+  "zcu_id": "zcu-rear-left"
+}

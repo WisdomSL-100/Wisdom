@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ad0ffa1754bab6cc63e2ed2fc8f5625254c1e8a16e56cc0998e96a2f55ecc0f6a",
+  "manifest": {
+    "ecu_id": "zcu-front-right",
+    "image_size": 58,
+    "sha256": "2367a58e4a87b4907b7aba36e001ee781082172538f3c03ae682c0e90a794f82",
+    "signature": "b260f2042ee8eb252ac78478ce7f3839ccf9371eaaa1fcb70b863583c6cfd890",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": false,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Traffic rate limiting / DoS resilience - zcu-front-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-front-right"
+}

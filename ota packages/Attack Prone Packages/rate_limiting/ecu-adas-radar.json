@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a6e9dbd3d0999a269b137d7f0f5957d242a94e1106d446420add77f19d320f07f",
+  "manifest": {
+    "ecu_id": "ecu-adas-radar",
+    "image_size": 58,
+    "sha256": "fed2c39854a35598e99bee43ea67c94dbcb96499b0e0fdbe67e818f899fc21b4",
+    "signature": "22adb01880ba67580cd6e9f53bbd6615b9633cbe76c969669b25af73ef3d0956",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": false,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Traffic rate limiting / DoS resilience - ecu-adas-radar",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-adas-radar"
+}

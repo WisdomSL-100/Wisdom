@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a7cec9797b5e7aa56069f4d8fd1667d683d30cfa6e9e30dd339a1f6b0234597a2",
+  "manifest": {
+    "ecu_id": "ecu-rear-camera",
+    "image_size": 58,
+    "sha256": "42ff6fb0fcf6af59c3052e2eeadbaf3b56f5ed7e48a98b67fd06b0a84579c006",
+    "signature": "a69e16df233694dfdc0a45bee20f4355a88dbb87719ddef9e1dc713c522a0488",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": false,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W8 - Firmware signature verification - ecu-rear-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-rear-camera"
+}

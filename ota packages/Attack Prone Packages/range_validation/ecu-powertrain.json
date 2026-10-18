@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ac70ae763361bec438da2903e20920805ecbbeed05745f05fd48dcbabac105382",
+  "manifest": {
+    "ecu_id": "ecu-powertrain",
+    "image_size": 58,
+    "sha256": "18cb8b60e21fb1f21ac11eee1d5c0a5e04b9fe8ab3aac04a1b0e280232c39055",
+    "signature": "776e8edb4044c71483edf3ab482af62b03c8f0ab20a126d6727d2d25b6061671",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": false,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W6 - Data range validation - ecu-powertrain",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-powertrain"
+}

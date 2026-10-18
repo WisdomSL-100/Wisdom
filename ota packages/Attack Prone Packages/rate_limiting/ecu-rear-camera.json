@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313afb924a318148c95dd436ae5dd7f406772b0b67a304da3a0ae6a5f4146612c6ab",
+  "manifest": {
+    "ecu_id": "ecu-rear-camera",
+    "image_size": 58,
+    "sha256": "7eacad9dbf56f79ba134edcc4da4301ecde4581d7b07f5795a12fde66f5fe3ad",
+    "signature": "6a93e4eda6245908589d64f47b82b9333a06f2955c3ebdff49af03c57e410098",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": false,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Traffic rate limiting / DoS resilience - ecu-rear-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-rear-camera"
+}

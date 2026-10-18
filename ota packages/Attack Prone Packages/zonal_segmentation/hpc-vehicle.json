@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aa2c16c1cccd63c64619c3d37aa83a1149855b8a4d4d19485117001453b83cb91",
+  "manifest": {
+    "ecu_id": "hpc-vehicle",
+    "image_size": 58,
+    "sha256": "f48f20fe37c62807df5a0847f1947c9195634af099ee976b0e2fceb03e32861c",
+    "signature": "77c43da1f49c6a015b6ae3652c092114e2a116da25a7771c15e7ce0f3e02edb1",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - hpc-vehicle",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-vehicle"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ae351bb4ea4208ae733a027851bf7e217754aa33cdfb3e50fd0791f2b43ad4574",
+  "manifest": {
+    "ecu_id": "ecu-front-camera",
+    "image_size": 58,
+    "sha256": "33e6fa6b7ac60039785b1f1c7122d8f488f7bae6d9bacc48d8d30378a9cde4a4",
+    "signature": "1310925fc82d198f9b81e6f135ec7306c82920f839fbf674c44bcaebd4ebf79b",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": false,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Freshness validation - ecu-front-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-front-camera"
+}

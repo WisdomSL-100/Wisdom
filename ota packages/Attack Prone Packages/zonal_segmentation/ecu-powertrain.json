@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aa45afeaa077a48cef09d1013447ce8c54b32b3b3f2227dbf49986a3cd0c1d0f6",
+  "manifest": {
+    "ecu_id": "ecu-powertrain",
+    "image_size": 58,
+    "sha256": "6cca3a2b946ad41f98b52f05398e64f0ab181e6f06567705ee47c14de36bedb0",
+    "signature": "7d648e7a4d56563be4baef8dc6b3a13ed670fdbb2aafd37717bf1570b4650042",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - ecu-powertrain",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-powertrain"
+}

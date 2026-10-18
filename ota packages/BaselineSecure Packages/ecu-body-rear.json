@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a4152c9086a9ee6d8e78b5b548ecff3ebc24308a9faa20993b73d0b82fac34c8e",
+  "manifest": {
+    "ecu_id": "ecu-body-rear",
+    "image_size": 58,
+    "sha256": "6884ddaf3e0da2fc7be8229c3154c8abec3898e0da06c6867e8c15c07fef8e98",
+    "signature": "8660d3db2b3c4665a530b8ffe91c8cb5fcf1e5ef558fb7de748985fe3d2b04be",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "BASELINE - Secure profile - ecu-body-rear",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-rear",
+  "zcu_id": "zcu-rear-left"
+}

@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a62416519952bd88b7ed361c524ed8f4863f90fe1c474d9bbe2720777846f6cf5",
+  "manifest": {
+    "ecu_id": "ecu-telematics",
+    "image_size": 58,
+    "sha256": "d3e418e81a1c8aa1cf78c6f077ab02430f5e92ba2edd4f82e232202ccdd6672c",
+    "signature": "242eb9524600d077aca2980e437c17d93571ae20be41ea8fa18bcec70db8694e",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": false,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Traffic rate limiting / DoS resilience - ecu-telematics",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-telematics",
+  "zcu_id": "zcu-rear-right"
+}

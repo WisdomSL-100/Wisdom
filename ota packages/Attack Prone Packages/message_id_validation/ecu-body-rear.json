@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a499cd6d80da2c4122ba2a76e60dcb6b803597b92cd5252f246dcb059d07248a7",
+  "manifest": {
+    "ecu_id": "ecu-body-rear",
+    "image_size": 58,
+    "sha256": "1709f7aa6c1a403746733c882120a9f9f2b2fe47d46c6c0bed41428a9210efc3",
+    "signature": "066ccd72cc2b6ad063eb68e24d99c40664d994fe6f771b850d01ba3149a0a60c",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": false,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W2 - Message ID validation - ecu-body-rear",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-rear",
+  "zcu_id": "zcu-rear-left"
+}

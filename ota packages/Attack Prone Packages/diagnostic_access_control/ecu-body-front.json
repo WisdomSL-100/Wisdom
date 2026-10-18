@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ae7c06ec5d1df8d59293297d45cc358b9b622561aab2ffd4c4f3c4560df9c5a4a",
+  "manifest": {
+    "ecu_id": "ecu-body-front",
+    "image_size": 58,
+    "sha256": "2d5f7d0b3dbd7de2f26389f25b894c2f1c0d803a977072afae19d0f7ee351bc4",
+    "signature": "ced11e794a60d84b8d2256e25f100d3a417cc10d13c433ca154573293ac1fb1b",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": false,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W3 - Unauthorized diagnostic access - ecu-body-front",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-front",
+  "zcu_id": "zcu-front-right"
+}

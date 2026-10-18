@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aa938bd6216f5b93d4a6fe486b0924e272d8ac55a9a9d925b387048130d85ca5f",
+  "manifest": {
+    "ecu_id": "zcu-front-right",
+    "image_size": 58,
+    "sha256": "5917247406bc9e07e670e02315d5666f4e072da51f64bf9c836f87215b4d676f",
+    "signature": "f7acce2cd37db9ee73c666ecfd9f2bbc684f7158acbcdcb0ce2754cbee2de8a9",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - zcu-front-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-front-right"
+}

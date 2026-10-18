@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a006029d3c176ba7471d4f907a1fbfa3c48e27137d9950ba5a4b586d19da03d6f",
+  "manifest": {
+    "ecu_id": "ecu-battery",
+    "image_size": 58,
+    "sha256": "760e2237cfa084e097cf3867015f159103b03e0e7ae0fefd7a2bd01ab62dae2f",
+    "signature": "903c42dae9be35bc76ff0ce36b14679e7ee152400ab7e38241fe5d3fd58ca5fc",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": false,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W2 - Message ID validation - ecu-battery",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-battery"
+}

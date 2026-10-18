@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a76bf895bc9aff8b2564feb87b1a1b80592fe0de0c4791a288514fd6b12ea674c",
+  "manifest": {
+    "ecu_id": "ecu-front-camera",
+    "image_size": 58,
+    "sha256": "f1ba4f3b97e1ae1e58f7c5bea2c49fe58b143b599727c071d9373c0019312762",
+    "signature": "3530c0976d151949c5fb5142557ca00234c79facb3c6bd593a4ded772f927a58",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": false,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Replay validation - ecu-front-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-front-camera"
+}

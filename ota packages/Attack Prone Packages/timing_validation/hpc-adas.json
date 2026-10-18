@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ad9066ac44f21b65e6ffd2ddb1db13b9d0ac67cd34a2ba5deea2c55498157a5ba",
+  "manifest": {
+    "ecu_id": "hpc-adas",
+    "image_size": 58,
+    "sha256": "a09dfc22056506fdb7ae58c455a6c65df6e1e97a74c9f822568114cd50376fba",
+    "signature": "82025db6262d4185cd63e9ca632e8c637f9d2598eb7974338103565f5189f17b",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": false,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Timing / DoS resilience - hpc-adas",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "hpc-adas"
+}

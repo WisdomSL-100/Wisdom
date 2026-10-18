@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a10df656a0934e22965c1986028bc3442a94358eddaf6d7c6061dbd759b83063b",
+  "manifest": {
+    "ecu_id": "zcu-rear-right",
+    "image_size": 58,
+    "sha256": "c3fe0bfd207624ae561830ee71a987490f9d50af19993aaa7232f482e2dd169a",
+    "signature": "4a34b45fde363172c65440df19fcbe1a7d70e29d36ce977328e45c18b7af0ac2",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": false,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Replay validation - zcu-rear-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-rear-right"
+}

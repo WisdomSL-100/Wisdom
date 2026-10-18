@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313af2bc4336a1c41aa5e47522b30f05535757082ca2daad24c79aaa0c95bcc09573",
+  "manifest": {
+    "ecu_id": "hpc-vehicle",
+    "image_size": 58,
+    "sha256": "0b4c691c86d69174f8667da6486fcf448c34b74ac1e156f245d0ae5f2a4b2b0c",
+    "signature": "40cdff8e1944ad2f62d8a892c4c83e27e0f34d9a6e73cf4459f7f8cbb1b702ed",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": false,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W2 - Message ID validation - hpc-vehicle",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-vehicle"
+}

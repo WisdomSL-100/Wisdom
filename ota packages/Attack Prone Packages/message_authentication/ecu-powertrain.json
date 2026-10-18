@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aec9e40866b4df655b42da4ce5be853da1c72866f4c28149cde9ab07d8da51a0c",
+  "manifest": {
+    "ecu_id": "ecu-powertrain",
+    "image_size": 58,
+    "sha256": "38fe4eaa428a01eb40796c495d9f123b1585f21c574f5f3e6eb4adbfad832f47",
+    "signature": "648d5cbe3957d1b36889fb5559fadd1652595e95e1d51335ff8f1b7cd60e13a5",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - ecu-powertrain",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-powertrain"
+}

@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ad115b69e90bcebf65674906bc9b849610a158c3fb0bb3db0c3e338c420ff1055",
+  "manifest": {
+    "ecu_id": "ecu-telematics",
+    "image_size": 58,
+    "sha256": "bc233faf876681b9dce64a5c4854d86d0034184e299f8284e42d0e06d0b86259",
+    "signature": "3b11dcf4b2b1c121852e37dee17ee9a55560449d1f68861099345567dc854da7",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": false,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W2 - Message ID validation - ecu-telematics",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-telematics",
+  "zcu_id": "zcu-rear-right"
+}

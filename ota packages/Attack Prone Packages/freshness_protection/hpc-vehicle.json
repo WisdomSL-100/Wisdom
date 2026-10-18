@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a9809656a1d119dcc033394d8623e63a8bfde015ee265a935dc260e07166f08b8",
+  "manifest": {
+    "ecu_id": "hpc-vehicle",
+    "image_size": 58,
+    "sha256": "1e5569d27d563cd3f4e11a8a18de0383d6927f3c11cc39c631f99557d96a113f",
+    "signature": "147a1bca062fd26c592e19fd079e8052e8d09f67eafd8d37e81f098cb5e25fd6",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": false,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Freshness validation - hpc-vehicle",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-vehicle"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aae7d55074081b14aefcc8c1a6f493c0a35104517735c80588f94fbd88c17c41e",
+  "manifest": {
+    "ecu_id": "ecu-adas-radar",
+    "image_size": 58,
+    "sha256": "930475e311de852485093b815500114caa80ed878981074f5120eca0a9cf9e3b",
+    "signature": "83850c58808441a650341a3e82c3b15016974d2746bc4a4ccb414bf98b953909",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - ecu-adas-radar",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-adas-radar"
+}

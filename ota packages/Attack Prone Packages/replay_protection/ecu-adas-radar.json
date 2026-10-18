@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313af23ab7ce6c088446031fd3095b31f9afd3d30dbff2604a90b77bb4a374528c63",
+  "manifest": {
+    "ecu_id": "ecu-adas-radar",
+    "image_size": 58,
+    "sha256": "c4b80dabe755b305d3e0320ab72d7c61a3895690873bb616abf3f87be75bd676",
+    "signature": "fe762045e5201786fcd3c58dcfae4022055bfdcf53b494c803c31ce3ae386a61",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": false,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Replay validation - ecu-adas-radar",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-adas-radar"
+}

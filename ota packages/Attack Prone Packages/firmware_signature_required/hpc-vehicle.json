@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313af3a9f02f300bf6dab0624aa4a0a5db2fc447bf997671151d3ea1e39f65aa248a",
+  "manifest": {
+    "ecu_id": "hpc-vehicle",
+    "image_size": 58,
+    "sha256": "dba244d78b522dc8851c9dbf94c53d7c05823a58dde1a5121aa30252166a3c64",
+    "signature": "c6363ea3b30bd71a1ce6aec5d143b6e4ad7665ded29eab62dbba8695ffc95ec9",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": false,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W8 - Firmware signature verification - hpc-vehicle",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-vehicle"
+}

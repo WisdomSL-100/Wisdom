@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a0ab575598f21bf60fc65a392e1fd9193f1d8cf2879d876d2c10f66165e3f2299",
+  "manifest": {
+    "ecu_id": "zcu-rear-right",
+    "image_size": 58,
+    "sha256": "ce292d96d61ab742223be71895a321c998b4a04e42c555146bdd178d7e303909",
+    "signature": "f0338fecbc0a12d16d555f49c5437f2ea6a124df2549813ac4da4019202c6c2e",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": false,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Timing / DoS resilience - zcu-rear-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-rear-right"
+}

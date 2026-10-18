@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a658ac030ebe47cfa4d73d1a1400c04cde03ebb7de33e164b840bbe5aee1d1c7c",
+  "manifest": {
+    "ecu_id": "zcu-front-left",
+    "image_size": 58,
+    "sha256": "ac814e8464f53c93559ba576418772bdfe6d716131e15ccffe7283ecec4b88f7",
+    "signature": "7140ee63819aba8f24169c9985b8bd2ff2dba61c2a51b7643ff4b4b8bc864d8d",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": false,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Freshness validation - zcu-front-left",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-front-left"
+}

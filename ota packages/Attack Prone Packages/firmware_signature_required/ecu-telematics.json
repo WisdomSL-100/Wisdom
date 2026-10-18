@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a4a9475e5499511c34fc6bddca8bc5aac5f7dad28ab624442a2b85538c185835b",
+  "manifest": {
+    "ecu_id": "ecu-telematics",
+    "image_size": 58,
+    "sha256": "fd72102430b17cd09f225b2a18d1719aae7be9906d0d161de91f8dd2044661cf",
+    "signature": "3c2ed32a279785a9199dd9f34c4095619d8de6567f7352b2306301c20e0cd026",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": false,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W8 - Firmware signature verification - ecu-telematics",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-telematics",
+  "zcu_id": "zcu-rear-right"
+}

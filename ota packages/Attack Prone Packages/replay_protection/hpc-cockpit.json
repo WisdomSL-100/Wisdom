@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a09d8a0b6c56a97e639894114a4c7705d3d6bfabd5d1ab4bd29a9bad61f9e9a3c",
+  "manifest": {
+    "ecu_id": "hpc-cockpit",
+    "image_size": 58,
+    "sha256": "759bf37ded20c0758cba1fe2c0de6e167c4cd3acd2cac7bd832ae3c58dc055a1",
+    "signature": "8473ff330bc901de9254935630000890d1e85a9f7b87834ee1f98e17273c82aa",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": false,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Replay validation - hpc-cockpit",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-cockpit"
+}

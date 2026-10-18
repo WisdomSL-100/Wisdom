@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ab99c02bf8904b226674972ea6b87102574e1660904a7214074054048efbcc0b7",
+  "manifest": {
+    "ecu_id": "ecu-battery",
+    "image_size": 58,
+    "sha256": "3064761081c82bd89bbebfaa17b4123617967bd1a76d9651d57b39bf4c002c8b",
+    "signature": "b8ca8f3f3fde92f00a2d1f897718af03aaf54197e49f7f7038d22a8250db85ea",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": false,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W6 - Data range validation - ecu-battery",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-battery"
+}

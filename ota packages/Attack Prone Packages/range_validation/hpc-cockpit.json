@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a8fe4d04fe1a2e6e90d8bd789807341586626ca47459528d56a6ff0273a0516bb",
+  "manifest": {
+    "ecu_id": "hpc-cockpit",
+    "image_size": 58,
+    "sha256": "d4c27d194700549080d075425e6f60c3e581c6422a902e9b85374c6ee248cda8",
+    "signature": "15a0a3d2c500acbb3d9d56c2197095ec5c96b2d244f3fb311b925086dd6b63a0",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": false,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W6 - Data range validation - hpc-cockpit",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-cockpit"
+}

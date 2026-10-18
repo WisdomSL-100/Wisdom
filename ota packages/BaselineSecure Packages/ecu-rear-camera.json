@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a0b2d8dc6df4048d9c5caa4abced578251b64a871f78e4c9a87d721069d5b7072",
+  "manifest": {
+    "ecu_id": "ecu-rear-camera",
+    "image_size": 58,
+    "sha256": "b3015c85dc497d0b1b82a0e765087c9fec3e136aba307710246799af28a78adc",
+    "signature": "22afab76ec5d9d8a2793cd0faf007482800e1e9ca2c77f858c403fe04c83c009",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "BASELINE - Secure profile - ecu-rear-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-rear-camera"
+}

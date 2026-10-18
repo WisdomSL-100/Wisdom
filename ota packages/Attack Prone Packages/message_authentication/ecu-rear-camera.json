@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a0c41fce013c6c717dd4d96c798b29f96e8f85465ea00ae47c7f3bb00dd079871",
+  "manifest": {
+    "ecu_id": "ecu-rear-camera",
+    "image_size": 58,
+    "sha256": "2a8e293bcdd6016b082bdaf96dcbabd4e89ada85d7549e2c9e6e187760e8fb3d",
+    "signature": "fb6ceedd765052ba45753ccb4ea195642fc5c0efc9fdd13843eff4188c2f43a2",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - ecu-rear-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-rear-camera"
+}

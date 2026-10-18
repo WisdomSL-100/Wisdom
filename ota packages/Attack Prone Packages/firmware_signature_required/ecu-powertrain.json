@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a6d389991c85b0f9de639c2e6450ec4e032c50b5934838997be863cc60617ca44",
+  "manifest": {
+    "ecu_id": "ecu-powertrain",
+    "image_size": 58,
+    "sha256": "f7e2c99c455a62641d9876a0d1f603841af3f619ff04fc7e387c292aa23d6474",
+    "signature": "db4dfa22f8209b0c09a980a0f544b86794d2d61c6c859c5f05fe8cb0374d0f97",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": false,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W8 - Firmware signature verification - ecu-powertrain",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-powertrain"
+}

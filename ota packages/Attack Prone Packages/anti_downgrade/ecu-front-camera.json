@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a0e4c25d502b7d70c1ff4bab5865e89555dc04fb926c2e31da6c27d659b994e03",
+  "manifest": {
+    "ecu_id": "ecu-front-camera",
+    "image_size": 58,
+    "sha256": "8b68d4a002d4680bd10ba77d7466c72f3cc644a4a8c039b3e0923f2fc487b5a4",
+    "signature": "9a351c7433e22613690376aa2add0a0ffa6f033c8a99a37e3a9222806dfcd3e1",
+    "software_profile": {
+      "anti_downgrade": false,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W9 - Firmware downgrade protection - ecu-front-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-front-camera"
+}

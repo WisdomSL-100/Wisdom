@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a112e29eab3ed69af34146556087e439a422ee0d00f59b56d59335bb7e96aa85c",
+  "manifest": {
+    "ecu_id": "hpc-cockpit",
+    "image_size": 58,
+    "sha256": "4b935d6dae1145fcd67b6a1c2a7ba79227a38dec1687c27db656ac15feb1ba5a",
+    "signature": "5b15af4b11d35da41a0e75fac4e507bf4073914f79535eabe15f77a006926e98",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - hpc-cockpit",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "hpc-cockpit"
+}

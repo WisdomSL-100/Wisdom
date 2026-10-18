@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ac970169d3c28e1e31338eda357be92e7d5b1b6cf266509b5df1e68627e7d6bbc",
+  "manifest": {
+    "ecu_id": "ecu-body-front",
+    "image_size": 58,
+    "sha256": "add766e6422f86add0e85051f1aa7a8bf02a8c18da1c01f461440175aa747da2",
+    "signature": "323339f19c6311ffb2d6b881d9687d6014c97d1218d7d29e594dad63e64d2215",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - ecu-body-front",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-front",
+  "zcu_id": "zcu-front-right"
+}

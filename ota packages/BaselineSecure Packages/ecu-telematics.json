@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ac20def2f4fcd5b019940fe7514ed0ffc517d23e744300b3bc05ca6646c1b3692",
+  "manifest": {
+    "ecu_id": "ecu-telematics",
+    "image_size": 58,
+    "sha256": "ab8c9307c8e0e073bf088895548ea89e66ed99a4fbbb6482ef3daa32ae16e797",
+    "signature": "84cc5d055ebaf69390d92d41b7b79037a730bfba21defa74aa65c337d33c8b44",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "BASELINE - Secure profile - ecu-telematics",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-telematics",
+  "zcu_id": "zcu-rear-right"
+}

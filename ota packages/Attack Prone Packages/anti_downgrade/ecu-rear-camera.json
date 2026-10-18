@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aa6c8bdc35701149356b5015005a6ae6dd436cf98ada991f8e6a166883519ef69",
+  "manifest": {
+    "ecu_id": "ecu-rear-camera",
+    "image_size": 58,
+    "sha256": "1d84392f4a1508f770b2f783dde9d95e6e7e191134a85e82b8be5e504c8c989a",
+    "signature": "2cfc48aad10accd6f4a00e5bd1ea1e028a819d0d11b6b7814fe83578eddfabd7",
+    "software_profile": {
+      "anti_downgrade": false,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W9 - Firmware downgrade protection - ecu-rear-camera",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-rear-camera"
+}

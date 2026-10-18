@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a65edbfe577f58e6d096a298e07df00f180f1ef1fe4fee35bcf2b83abec5f3103",
+  "manifest": {
+    "ecu_id": "zcu-rear-left",
+    "image_size": 58,
+    "sha256": "d3ebec31258ae57980c87a9007d792a9e9a042ca197da5e60b96d1f953de36a4",
+    "signature": "c5f122a6600fe04108ca63445bbc6227d81170191d734d57944440a8e3762e10",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - zcu-rear-left",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "zcu-rear-left"
+}

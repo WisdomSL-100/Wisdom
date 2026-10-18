@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a620f0d945126c8a556d20e7599b2d870c1ea683298ef2237f8d2c46e1470dc40",
+  "manifest": {
+    "ecu_id": "ecu-body-rear",
+    "image_size": 58,
+    "sha256": "a5f53c909e8efb6f47e6ee22ab49b2a0a63991ac28716018abe2b9abedc06b52",
+    "signature": "eb3aba117aab8b127c28600fd0ee56ade48b8b1dcee7c32554b09f1ff03e2a7c",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": false,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W3 - Diagnostic access control - ecu-body-rear",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-rear",
+  "zcu_id": "zcu-rear-left"
+}

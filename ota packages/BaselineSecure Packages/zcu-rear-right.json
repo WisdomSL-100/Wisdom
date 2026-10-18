@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a8136f6b0adf7579e3d9829e3f088a3811eab1efe785e03c9e0da2d56a6541008",
+  "manifest": {
+    "ecu_id": "zcu-rear-right",
+    "image_size": 58,
+    "sha256": "8234b166632b010731d95c9fe72ff6a8fe86364b5f02c0078b3a75a6ecc57252",
+    "signature": "eec0ab4bb3ac9608f54750eb9ef45f17c2fd04e90795ae4d805c7dcdfb95d8b7",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "BASELINE - Secure profile - zcu-rear-right",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-rear-right"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a1d152442686da991bac72743501b9640c7794532a5c262b2ebfd2c1c3e65564e",
+  "manifest": {
+    "ecu_id": "hpc-adas",
+    "image_size": 58,
+    "sha256": "31a137734e68a647299896bc69f6538290a5147dc6f7385f00605e4c7156995d",
+    "signature": "6308c157275e1c4e8b48462535c3e3062e387394b3c446ba7a46af662ba0ff65",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - hpc-adas",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "hpc-adas"
+}

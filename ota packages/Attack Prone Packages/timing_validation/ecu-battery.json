@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ac0d9fba9910241ead5ab47537fb26aa1f9141a6acadeda9214f08272a8a09dab",
+  "manifest": {
+    "ecu_id": "ecu-battery",
+    "image_size": 58,
+    "sha256": "4b47935dbcfbc0037d0b1df9025e663ff4dda43ac4a59929880486e98d08e646",
+    "signature": "0e9551c0280b0342f5e4591636aced03099fdf0a6276b5f393aa9419b463b6ec",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": false,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W5 - Timing / DoS resilience - ecu-battery",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-battery"
+}

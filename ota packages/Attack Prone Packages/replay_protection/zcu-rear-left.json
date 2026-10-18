@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a49021342c1a908ba28649491fe09bd06f9ae04c29147868d24892d0198fd2ffc",
+  "manifest": {
+    "ecu_id": "zcu-rear-left",
+    "image_size": 58,
+    "sha256": "f3fe2ef210a20b2aa1d37323976613c033ece257373460b69350ff8b76863bf8",
+    "signature": "c4e3372796c2ab5c9be522b31713d92ee3b9ff165427c7e5aa7e63cb20538d0a",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": false,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W1 - Replay validation - zcu-rear-left",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "zcu-rear-left"
+}

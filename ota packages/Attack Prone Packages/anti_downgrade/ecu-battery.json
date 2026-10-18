@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aca6d6c3713390feea0e5bcdeae701d52333a380ac043c1501e17b89a51b9d931",
+  "manifest": {
+    "ecu_id": "ecu-battery",
+    "image_size": 58,
+    "sha256": "08012c59b3e366a00896de83adb61becd4fa2e3f902e288f817f23becf4926ee",
+    "signature": "4a264667645c019a51b88fe55f6b7b1856539a7867258de6c355721315da017d",
+    "software_profile": {
+      "anti_downgrade": false,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W9 - Firmware downgrade protection - ecu-battery",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-battery"
+}

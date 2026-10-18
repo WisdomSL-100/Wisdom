@@ -1,0 +1,1911 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AegisDrive Cyber Assurance</title>
+  <style>
+    :root { color-scheme: light; --ink: #172033; --muted: #667085; --line: #e4e7ec; --sky: #f8fafc; --sky-strong: #edf4ff; --blue: #2563eb; --blue-dark: #1d4ed8; --green: #087a5b; --amber: #b54708; --red: #b42318; --white: #fff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f8fafc; color: var(--ink); font: 14px/1.5 Inter, "Segoe UI", Arial, sans-serif; }
+    .shell { max-width: 1540px; margin: 0 auto; padding: 22px 28px 36px; }
+    header { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 14px; }
+    header > div { display: flex; align-items: center; gap: 12px; }
+    .brand-copy { display: grid; align-content: center; gap: 0; }
+    .brand-copy .subtitle { margin: 2px 0 0; line-height: 1.3; }
+    header > div:first-child::before { content: "AD"; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: #1d4ed8; color: #fff; font-size: 13px; font-weight: 800; letter-spacing: -.05em; }
+    h1 { margin: 0; font-size: 21px; letter-spacing: -.025em; color: #101828; }
+    h2 { margin: 0 0 12px; font-size: 20px; }
+    h3 { margin: 20px 0 10px; font-size: 16px; }
+    p { margin: 5px 0 12px; }
+    .subtitle, .muted { color: var(--muted); }
+    .badge { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; background: #ecfdf3; color: #027a48; padding: 7px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .scan-phase-banner { margin-bottom: 12px; border: 1px solid #bfdbfe; border-radius: 10px; padding: 9px 12px; background: #eff6ff; color: #1e3a8a; font-weight: 800; }
+    .scan-phase-banner[data-phase="attack"] { border-color: #fdba74; background: #fff7ed; color: #9a3412; }
+    .scan-phase-banner[data-phase="after_attack"] { border-color: #86efac; background: #f0fdf4; color: #166534; }
+    .scan-phase-banner[data-phase="idle"] { border-color: var(--line); background: var(--white); color: var(--muted); }
+    .scan-phase-banner[data-running="true"] { animation: phase-alert 1s ease-in-out infinite; }
+    .phase-progress { --progress: 0%; display: flex; position: relative; align-items: flex-start; margin: 0 0 16px; padding: 0; background: linear-gradient(90deg, #16a34a 0 var(--progress), #fff var(--progress) 100%) center 9px / 75% 2px no-repeat; }
+    .phase-progress-step { position: relative; z-index: 1; display: grid; flex: 1 1 0; justify-items: center; gap: 5px; min-width: 0; padding: 0 4px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
+    .phase-progress-step input { appearance: none; width: 20px; height: 20px; margin: 0; border: 2px solid #98a2b3; border-radius: 50%; background: var(--white); transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease; }
+    .phase-progress-step[data-state="active"] input { border-color: #f97316; background: radial-gradient(circle, #f97316 0 4px, var(--white) 4.5px); animation: progress-pulse 1s ease-in-out infinite; }
+    .phase-progress-step[data-state="done"] input { border-color: #16a34a; background: #16a34a; box-shadow: inset 0 0 0 4px var(--white); }
+    .phase-progress-step[data-state="active"] { color: #9a3412; }
+    .phase-progress-step[data-state="done"] { color: #166534; }
+    .phase-progress-step .phase-note { font-weight: 600; font-size: 11px; opacity: .8; }
+    .baseline-toggle { display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+    .baseline-toggle + .muted { text-align: center; }
+    .hero { display: grid; grid-template-columns: 1.35fr .95fr; gap: 18px; padding: 20px; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 14px; color: var(--ink); background: var(--white); box-shadow: 0 1px 2px #1018280d; }
+    .hero h2 { margin: 0 0 6px; font-size: clamp(20px, 2.4vw, 28px); letter-spacing: -.03em; }
+    .hero p { margin: 0; color: var(--muted); max-width: 760px; }
+    .journey { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; align-content: center; }
+    .journey-step { min-height: 82px; padding: 11px; border: 1px solid #dbeafe; border-radius: 10px; background: #f8fbff; }
+    .journey-step strong { display: block; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: #2563eb; }
+    .journey-step span { display: block; margin-top: 5px; font-size: 13px; font-weight: 700; }
+    .nav { position: sticky; top: 0; z-index: 5; display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; width: fit-content; max-width: 100%; margin: 0 0 16px; background: var(--white); box-shadow: 0 2px 8px #10182812; }
+    .nav button { border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 700; padding: 9px 14px; }
+    .nav button[aria-selected="true"] { color: var(--blue-dark); background: #eef4ff; box-shadow: none; }
+    .page[hidden] { display: none; }
+    body[data-workspace="controls"] .hero,
+    body[data-workspace="controls"] .outcome-grid,
+    body[data-workspace="logs"] .hero,
+    body[data-workspace="logs"] .outcome-grid,
+    body[data-workspace="analytics"] .hero,
+    body[data-workspace="analytics"] .outcome-grid { display: none; }
+    body[data-workspace="logs"] .shell { padding-top: 14px; }
+    body[data-workspace="logs"] .table-wrap { max-height: calc(100vh - 390px); }
+    .controls-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(270px, 1fr); gap: 14px; align-items: start; }
+    .assessment-column { display: grid; align-content: start; gap: 10px; min-width: 0; }
+    .panel, .section { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px #1018280d; }
+    .panel { border-top: 0; min-width: 0; }
+    .assessment-panel { border-top: 3px solid var(--blue); }
+    .assessment-panel > h2 { margin-bottom: 4px; }
+    .assessment-intro { margin: 0 0 8px; }
+    .node-selection-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+    .node-selection { min-width: 0; padding: 10px; border: 1px solid var(--line); border-radius: 9px; background: #fbfdff; }
+    .node-selection h3 { margin: 0 0 7px; font-size: 14px; }
+    .node-selection .control { margin: 0; }
+    .assessment-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; align-items: start; gap: 2px 14px; }
+    .assessment-options > .control,
+    .assessment-options > .inline-controls { margin: 3px 0; }
+    .assessment-options > .inline-controls { gap: 12px; }
+    .assessment-options > .inline-controls .control { margin: 0; }
+    .assessment-options .control { min-width: 0; }
+    .assessment-options select,
+    .node-selection select { min-height: 38px; }
+    .assessment-service-state .service-state-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; }
+    .assessment-service-state button { white-space: nowrap; }
+    .assessment-options .baseline-options,
+    .assessment-options .assessment-actions,
+    .assessment-options .capabilities-details { grid-column: 1 / -1; }
+    .baseline-options { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 4px 0; padding: 7px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .baseline-options .baseline-toggle { margin: 0; }
+    .baseline-options .baseline-toggle input { width: auto; }
+    .assessment-actions { display: grid; grid-template-columns: minmax(140px, 1fr) auto; align-items: center; gap: 8px; }
+    .assessment-actions .status { grid-column: 1 / -1; margin: 0; }
+    .assessment-actions .primary { width: auto; }
+    .assessment-actions .stop-button { width: auto; margin: 0; }
+    .demo-tip { margin: 6px 0 0; padding: 8px 10px; }
+    .weakness-tracker { padding: 12px 14px; }
+    .weakness-tracker h3 { margin: 0 0 3px; color: var(--blue-dark); font-size: 15px; }
+    .weakness-tracker > p { margin: 0 0 8px; color: var(--muted); font-size: 12px; }
+    .weakness-tracker-wrap { overflow-x: auto; }
+    .weakness-tracker table { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.35; }
+    .weakness-tracker th, .weakness-tracker td { padding: 5px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .weakness-tracker th { background: #f8fafc; color: #475467; font-weight: 700; }
+    .weakness-tracker tbody tr:last-child td { border-bottom: 0; }
+    .weakness-tracker td:first-child { width: 38px; color: var(--blue-dark); font-weight: 750; white-space: nowrap; }
+    .weakness-tracker td:last-child { width: 185px; white-space: nowrap; color: #475467; }
+    .weakness-tracker .test-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+    .weakness-tracker .test-tag { display: inline-block; padding: 1px 5px; border-radius: 999px; background: #eef4ff; color: #1d4ed8; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .tracker-test-key { margin-top: 8px; }
+    .tracker-test-key strong { color: #475467; }
+    .tracker-test-key p { margin: 5px 0 0; color: #475467; font-size: 12px; }
+    .service-stack { display: grid; gap: 10px; }
+    .service-panel { padding: 11px 12px; }
+    .service-panel h3 { margin: 0 0 4px; color: var(--blue-dark); font-size: 15px; }
+    .service-panel .control { margin: 6px 0; }
+    .service-help { margin: 2px 0 6px; color: var(--muted); font-size: 12px; }
+    .service-help summary { cursor: pointer; color: var(--blue-dark); font-weight: 650; }
+    .service-help p { margin: 6px 0; }
+    .panel h2 { color: var(--blue-dark); }
+    .section { margin-top: 14px; }
+    .control { margin: 9px 0; }
+    label { display: block; font-size: 13px; color: var(--muted); font-weight: 650; margin-bottom: 5px; }
+    select, input, button { max-width: 100%; border: 1px solid #b5d5e8; border-radius: 8px; background: white; color: var(--ink); font: inherit; padding: 9px 10px; }
+    select, input { width: 100%; }
+    select[multiple] { min-height: 76px; }
+    button { cursor: pointer; font-weight: 700; }
+    button.primary { width: 100%; border-color: var(--blue); background: var(--blue); color: white; padding: 11px 14px; box-shadow: 0 1px 2px #1d4ed866; }
+    button.secondary { background: var(--white); color: var(--blue-dark); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .inline-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .capabilities-details { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 7px; }
+    .capabilities-details summary { cursor: pointer; color: var(--blue-dark); font-weight: 700; }
+    .status { border-radius: 8px; background: var(--sky); padding: 9px 11px; color: var(--blue-dark); }
+    .status:empty { display: none; }
+    .status.error { background: #fff1f1; color: #9b2432; }
+    .demo-tip { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0 0; padding: 10px 12px; border: 1px solid #bce9d8; border-radius: 9px; background: #effcf6; color: #146246; font-size: 13px; }
+    .demo-tip strong { white-space: nowrap; }
+    .outcome-grid { display: grid; grid-template-columns: 1.25fr repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+    .outcome-card { min-height: 110px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); box-shadow: 0 1px 2px #1018280d; }
+    .outcome-card span { display: block; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+    .outcome-card strong { display: block; margin: 7px 0 4px; color: var(--blue-dark); font-size: 23px; line-height: 1.15; }
+    .outcome-card p { margin: 0; color: var(--muted); font-size: 13px; }
+    .outcome-card.decision { border-color: #91d5c0; background: linear-gradient(135deg, #effcf6, #fff); }
+    .outcome-card.risk-high { border-color: #f1bcc1; background: #fff6f6; }
+    .socket-grid { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 10px; }
+    .socket { border: 1px solid var(--line); background: var(--sky); border-radius: 10px; padding: 12px; }
+    .socket strong { display: block; color: var(--blue-dark); margin-bottom: 4px; }
+    button.socket { width: 100%; text-align: left; }
+    button.socket[aria-pressed="true"] { border-color: var(--blue); box-shadow: inset 0 0 0 2px #1675b933; }
+    .live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .table-wrap { overflow: auto; max-height: 430px; border: 1px solid var(--line); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 13px; background: white; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid #e0eff7; text-align: left; vertical-align: top; }
+    th { position: sticky; top: 0; z-index: 1; background: #dff3ff; color: #16466b; }
+    .log-filter-row th { top: 34px; padding: 5px; background: #edf7ff; }
+    .log-filter-row input { min-width: 95px; padding: 5px 6px; border-color: #b5d5e8; font-size: 11px; }
+    .event-row td { background: #fff8eb; }
+    .attack-pill { display: inline-block; border-radius: 999px; background: #fff0d3; color: #895500; padding: 2px 8px; font-weight: 700; }
+    .log-table tr[data-kind="attack"] td { background: #fff0ee; color: #922d21; font-weight: 650; }
+    .log-table tr[data-kind="diagnostic"] td { background: #eff9ff; }
+    .log-table tr[data-kind="probe"] td { background: #fff8e7; }
+    .log-kind { font-weight: 800; }
+    .log-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 0; color: var(--muted); font-size: 13px; }
+    .log-legend strong { color: var(--ink); }
+    .phase-summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .phase-chip { border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; background: var(--white); color: var(--muted); font-size: 12px; font-weight: 700; }
+    .phase-chip strong { color: var(--ink); }
+    .live-attention { display: flex; align-items: center; gap: 9px; margin: 10px 0; padding: 10px 12px; border: 1px solid #bfdbfe; border-radius: 9px; background: #eff6ff; color: #1e3a8a; font-weight: 700; }
+    .live-attention::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #2563eb; box-shadow: 0 0 0 4px #bfdbfe; animation: live-pulse 1.2s ease-in-out infinite; }
+    .live-attention.attack { border-color: #fdba74; background: #fff7ed; color: #9a3412; }
+    .live-attention.attack::before { background: #ea580c; box-shadow: 0 0 0 4px #fed7aa; }
+    .live-attention.rejection { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
+    .live-attention.rejection::before { background: #dc2626; box-shadow: 0 0 0 4px #fecaca; }
+    .packet-tag { display: inline-block; min-width: 46px; margin-right: 6px; border-radius: 4px; padding: 2px 5px; background: #dbeafe; color: #1d4ed8; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-align: center; }
+    .packet-tag.uds { background: #fef3c7; color: #92400e; }
+    .packet-tag.tcp { background: #dcfce7; color: #166534; }
+    .packet-tag.other { background: #f3f4f6; color: #4b5563; }
+    .log-table tr.fresh td { animation: packet-arrival 850ms ease-out; }
+    .log-table tr[data-phase="before_attack"] td, .log-table tr[data-phase="protocol_probes"] td { background: #eff8ff; }
+    .log-table tr[data-phase="attack"] td { background: #fff4ed; color: #9a3412; font-weight: 650; }
+    .log-table tr[data-phase="after_attack"] td { background: #f0fdf4; }
+    @keyframes live-pulse { 50% { opacity: .45; transform: scale(.75); } }
+    @keyframes packet-arrival { from { background-color: #bfdbfe; } to { background-color: inherit; } }
+    @keyframes phase-alert { 50% { box-shadow: 0 0 0 4px #fed7aa; } }
+    @keyframes progress-pulse { 50% { box-shadow: 0 0 0 5px #fed7aa; } }
+    @media (prefers-reduced-motion: reduce) {
+      .scan-phase-banner[data-running="true"],
+      .phase-progress-step[data-state="active"] input { animation: none; }
+    }
+    .stop-button { width: 100%; margin-top: 8px; border-color: var(--red); background: #fff1f1; color: #a11f2e; }
+    .scenario-note { background: #f3fbff; border-left: 4px solid #68c8f4; padding: 9px 12px; color: var(--muted); }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 12px; }
+    .metric { border-radius: 10px; padding: 14px; background: var(--sky); }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; color: var(--blue-dark); font-size: 22px; margin-top: 3px; }
+    .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(260px, 1fr)); gap: 16px; }
+    .chart-card { display: flex; align-items: center; gap: 24px; min-height: 210px; }
+    .pie { width: 168px; height: 168px; flex: 0 0 168px; border-radius: 50%; position: relative; background: conic-gradient(#dcecf5 0 100%); }
+    .pie::after { content: ""; position: absolute; inset: 34px; background: white; border-radius: 50%; }
+    .pie-center { position: absolute; inset: 0; z-index: 1; display: grid; place-content: center; text-align: center; font-weight: 800; color: var(--blue-dark); }
+    .pie-center small { color: var(--muted); font-size: 11px; font-weight: 600; }
+    .legend { list-style: none; margin: 0; padding: 0; }
+    .legend li { display: flex; align-items: center; gap: 8px; margin: 7px 0; }
+    .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+    .report-block { border-left: 4px solid #68c8f4; padding: 8px 14px; margin: 12px 0; background: #f3fbff; }
+    .report-block.problem-found { border-left-color: #dc2626; background: #fff4f2; }
+    .report-block.problem-found strong { color: #b42318; }
+    .report-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+    .report-actions h2 { margin: 0 auto 0 0; }
+    .report-export-status { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 12px; }
+    .result-output { white-space: pre-wrap; overflow-wrap: anywhere; margin: 5px 0; }
+    .service-panel .result-output { max-height: 68px; overflow: auto; padding: 6px 8px; font-size: 11px; line-height: 1.35; }
+    #sovd-result, #someip-result { max-height: 180px; overflow: auto; font-family: Consolas, monospace; font-size: 12px; background: #f8fafc; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+    .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: nowrap; }
+    .header-actions .primary { width: auto; white-space: nowrap; }
+    #sim-toggle-button[data-running="true"] { background: #fff; color: #166534; border: 1px solid #22c55e; }
+    .result-output.error { color: #9b2432; background: #fff1f1; border-radius: 8px; padding: 9px 11px; }
+    .empty { color: var(--muted); padding: 14px; }
+    @media (max-width: 1100px) { .hero, .outcome-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); } .controls-layout { grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); } .socket-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); } }
+    @media (max-width: 900px) { .controls-layout { grid-template-columns: 1fr; } .service-stack { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; } }
+    @media (max-width: 760px) { .node-selection-grid, .service-stack { grid-template-columns: 1fr; } .assessment-options { grid-template-columns: 1fr; } .assessment-options > .inline-controls { grid-column: 1; } .weakness-tracker table { min-width: 620px; } }
+    @media (max-width: 900px) { header { flex-wrap: wrap; gap: 10px 16px; } header > div:first-child { flex: 1 1 100%; } .header-actions { margin-left: 50px; } }
+    @media (max-width: 680px) { .shell { padding: 14px; } header { align-items: flex-start; flex-direction: column; } .header-actions { margin-left: 0; } .hero, .journey, .outcome-grid, .controls-layout, .node-selection-grid, .chart-grid, .metric-grid { grid-template-columns: 1fr; } .socket-grid { grid-template-columns: 1fr; } .chart-card { flex-wrap: wrap; } }
+  </style>
+</head>
+<body data-workspace="controls">
+  <div class="shell">
+    <header>
+      <div>
+        <div class="brand-copy">
+          <h1>AegisDrive Cyber Assurance</h1>
+          <p class="subtitle">Cyber assurance workspace</p>
+        </div>
+      </div>
+      <div class="header-actions"><button id="sim-toggle-button" class="primary" onclick="toggleVehicleSimulator()">Start vehicle simulator</button><span class="badge" id="cloud-status">Connecting to cloud…</span></div>
+    </header>
+    <nav class="nav" aria-label="Dashboard pages">
+      <button id="tab-controls" aria-selected="true" onclick="showPage('controls')">1 · Setup &amp; controls</button>
+      <button id="tab-logs" aria-selected="false" onclick="showPage('logs')">2 · Live packet console</button>
+      <button id="tab-analytics" aria-selected="false" onclick="showPage('analytics')">3 · Dashboard &amp; reports</button>
+    </nav>
+    <div class="scan-phase-banner" id="scan-phase-banner" data-phase="idle" data-running="false" role="status" aria-live="polite" aria-atomic="true">ASSESSMENT STATUS · No scan running</div>
+    <div class="phase-progress" id="phase-progress" aria-label="Assessment and report progress">
+      <label class="phase-progress-step" data-phase="before_attack" data-state="pending"><input type="checkbox" disabled><span>Baseline checks</span><span class="phase-note"></span></label>
+      <label class="phase-progress-step" data-phase="attack" data-state="pending"><input type="checkbox" disabled>Authorized attack</label>
+      <label class="phase-progress-step" data-phase="after_attack" data-state="pending"><input type="checkbox" disabled>Post-attack checks</label>
+      <label class="phase-progress-step" data-phase="report" data-state="pending"><input type="checkbox" disabled><span>Generate report</span><span class="phase-note"></span></label>
+    </div>
+    <section class="hero" aria-label="Cybersecurity assurance workflow">
+      <div>
+        <h2>Vehicle cybersecurity, made decision-ready</h2>
+        <p>Validate post-update security posture, detect policy drift, and deliver a clear next action for engineering and service teams.</p>
+      </div>
+      <div class="journey">
+        <div class="journey-step"><strong>1 · Select</strong><span>OTA package and target nodes</span></div>
+        <div class="journey-step"><strong>2 · Validate</strong><span>Bounded attack and behavior analysis</span></div>
+        <div class="journey-step"><strong>3 · Decide</strong><span>Explainable OTA and fleet report</span></div>
+      </div>
+    </section>
+    <section class="outcome-grid" aria-label="Current cybersecurity outcome">
+      <article class="outcome-card decision" id="outcome-decision"><span>Cyber decision</span><strong>Awaiting assessment</strong><p>Run a safe scan to create a decision-ready result.</p></article>
+      <article class="outcome-card" id="outcome-risk"><span>Current risk</span><strong>Unknown</strong><p>Behavior analysis has not run.</p></article>
+      <article class="outcome-card" id="outcome-scope"><span>Assessment scope</span><strong>Not selected</strong><p>Select one or more ECU, ZCU, or HPC nodes.</p></article>
+      <article class="outcome-card" id="outcome-action"><span>Next best action</span><strong>Choose an OTA or scan</strong><p>Use the guided demo path below.</p></article>
+    </section>
+    <main id="page-controls" class="page">
+      <section id="live-console">
+      <div class="controls-layout">
+        <div class="assessment-column">
+        <section class="panel assessment-panel">
+          <h2>Assessment setup</h2>
+          <p class="muted assessment-intro">Select nodes, choose the test, then run the assessment.</p>
+          <div class="node-selection-grid" aria-label="Assessment target nodes">
+            <div class="node-selection">
+              <h3>HPC nodes</h3>
+              <div class="control"><label for="targets-hpc">HPC scan target</label><select id="targets-hpc"></select></div>
+            </div>
+            <div class="node-selection">
+              <h3>ZCU nodes</h3>
+              <div class="control"><label for="targets-zcu">ZCU scan target</label><select id="targets-zcu"></select></div>
+            </div>
+            <div class="node-selection">
+              <h3>ECU nodes</h3>
+              <div class="control"><label for="targets-ecu">ECU scan target</label><select id="targets-ecu"></select></div>
+            </div>
+          </div>
+          <div class="assessment-options">
+            <div class="control assessment-service-state">
+              <label for="service-state-select">Vehicle service state</label>
+              <div class="service-state-row">
+                <select id="service-state-select">
+                  <option value="out_of_service">Out of service</option>
+                  <option value="in_service">In service</option>
+                </select>
+                <button class="secondary" onclick="setVehicleServiceState()">Apply</button>
+              </div>
+            </div>
+            <div class="control">
+              <label for="attack-type">Attack scenario</label>
+              <select id="attack-type"></select>
+            </div>
+            <div class="control">
+              <label for="scan-mode">Assessment mode</label>
+              <select id="scan-mode">
+                <option value="service_center_safe">Service-center safe</option>
+                <option value="oem_validation">OEM validation</option>
+                <option value="lab_penetration_test" selected>Lab penetration test</option>
+              </select>
+              <details class="service-help"><summary>About assessment modes</summary><p>Service-center safe blocks flooding/DoS and high or critical severity.</p></details>
+            </div>
+            <div class="inline-controls">
+              <div class="control">
+                <label for="severity">Severity</label>
+                <select id="severity">
+                  <option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="critical">Critical</option>
+                </select>
+              </div>
+              <div class="control">
+                <label for="attack-duration">Duration</label>
+                <select id="attack-duration">
+                  <option value="1">1 sec</option><option value="3">3 sec</option><option value="5">5 sec</option><option value="10" selected>10 sec</option><option value="30">30 sec</option><option value="60">60 sec</option>
+                </select>
+              </div>
+            </div>
+            <div class="baseline-options">
+              <label class="baseline-toggle" for="run-baseline-checks">
+                <input id="run-baseline-checks" type="checkbox">
+                Run baseline checks before the attack
+              </label>
+              <details class="service-help"><summary>About baseline checks</summary><p>When enabled, fresh baseline diagnostics and probes run before the attack. When off, those checks are skipped.</p></details>
+            </div>
+            <div class="assessment-actions">
+              <button id="run-scan-button" class="primary" onclick="runScan()" disabled>Run scan</button>
+              <button id="stop-scan-button" class="stop-button" onclick="stopAttack()" disabled hidden>Stop active simulated attack</button>
+              <p id="scan-feedback" class="status"></p>
+            </div>
+            <p class="demo-tip"><strong>Demo path</strong><span>Apply an OTA package, select its target, run a scan, then review the report.</span></p>
+            <details class="capabilities-details">
+              <summary>Attack and protocol-test capabilities</summary>
+              <p><strong>Available tests:</strong> Replay test; Spoofing / unauthorized-message test; Tampering / integrity test; Flooding / DoS resilience test; Unauthorized diagnostic / service-access test; Cross-zone segmentation test; Invalid firmware / secure-flashing test; IDS and auditability regression test.</p>
+              <p><strong>Bounded protocol probes:</strong> CAN/CAN-FD ID and signal-range validation, stale sequence and periodicity checks, authentication rejection, malformed SOME/IP and DoIP headers, unsupported UDS DID/RID, malformed UDS length, and an incorrect SecurityAccess key in copied ECU state.</p>
+              <p class="scenario-note">All activity is simulator-only. Timed attack scenarios send bounded CAN/CAN-FD frames, UDS requests, or invalid-firmware probes through the selected simulator socket handlers; socket events show accepted and rejected traffic. Protocol probes exercise simulator validation handlers. No traffic is sent to a physical vehicle network.</p>
+            </details>
+          </div>
+        </section>
+        <section class="panel weakness-tracker" aria-labelledby="weakness-tracker-heading">
+          <h3 id="weakness-tracker-heading">Weakness &amp; test tracker</h3>
+          <p>See which assessment scenarios can reveal each software weakness.</p>
+          <div class="weakness-tracker-wrap">
+            <table>
+              <thead>
+                <tr><th scope="col">ID</th><th scope="col">Weakness</th><th scope="col">Affected component</th><th scope="col">Tests that can reveal it</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>W1</td><td>Freshness / replay validation failure</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T1</span></div></td></tr>
+                <tr><td>W2</td><td>Unauthorized message ID accepted</td><td>ECU / ZCU / gateway</td><td><div class="test-tags"><span class="test-tag">T2</span><span class="test-tag">T6</span></div></td></tr>
+                <tr><td>W3</td><td>Unauthorized diagnostic or service access</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T5</span><span class="test-tag">T6</span></div></td></tr>
+                <tr><td>W4</td><td>Secure communication integrity / authenticity failure</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T2</span><span class="test-tag">T3</span></div></td></tr>
+                <tr><td>W5</td><td>Traffic rate limiting or DoS resilience regression</td><td>ECU / ZCU / gateway</td><td><div class="test-tags"><span class="test-tag">T4</span></div></td></tr>
+                <tr><td>W6</td><td>Incorrect data range or input validation</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T3</span></div></td></tr>
+                <tr><td>W7</td><td>Gateway zonal-segmentation policy regression</td><td>ZCU / gateway</td><td><div class="test-tags"><span class="test-tag">T5</span><span class="test-tag">T6</span></div></td></tr>
+                <tr><td>W8</td><td>Secure flashing / firmware signature verification failure</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T7</span></div></td></tr>
+                <tr><td>W9</td><td>Downgrade protection failure</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T7</span></div></td></tr>
+                <tr><td>W10</td><td>IDS detection or security audit logging regression</td><td>ECU / ZCU / HPC</td><td><div class="test-tags"><span class="test-tag">T1</span><span class="test-tag">T2</span><span class="test-tag">T3</span><span class="test-tag">T4</span><span class="test-tag">T5</span><span class="test-tag">T7</span><span class="test-tag">T8</span></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tracker-test-key">
+            <strong>Test key:</strong>
+            <p><strong>T1</strong> Replay · <strong>T2</strong> Spoofing · <strong>T3</strong> Integrity · <strong>T4</strong> DoS · <strong>T5</strong> Diagnostics · <strong>T6</strong> Segmentation · <strong>T7</strong> Firmware · <strong>T8</strong> IDS / auditability</p>
+          </div>
+        </section>
+        </div>
+        <aside class="service-stack" aria-label="Vehicle services">
+          <section class="panel service-panel" id="ota-assurance">
+            <h3>OTA</h3>
+            <details class="service-help"><summary>How to use</summary><p>Select a generated package or upload its JSON file. Packages update only their declared simulated target.</p></details>
+            <div class="control">
+              <label for="ota-package-catalog">Generated OTA package</label>
+              <select id="ota-package-catalog" onchange="loadCatalogOtaPackage(this.value)">
+                <option value="">Loading generated packages…</option>
+              </select>
+            </div>
+            <div class="control">
+              <label for="ota-package-file">Or upload package JSON</label>
+              <input id="ota-package-file" type="file" accept=".json,application/json" onchange="loadOtaPackage(this.files?.[0])">
+            </div>
+            <p class="result-output" id="ota-package-preview" aria-live="polite">Choose a package to preview its target and security profile.</p>
+            <button id="ota-flash-button" class="secondary" onclick="flashOtaPackage()" disabled>Flash selected package</button>
+            <p class="result-output" id="ota-result" aria-live="polite">No OTA package flashed.</p>
+            <p class="result-output" id="ota-assurance-result" aria-live="polite">OTA assurance will appear after a package is flashed.</p>
+          </section>
+          <section class="panel service-panel">
+            <h3>SOME/IP</h3>
+            <details class="service-help"><summary>How to use</summary><p>Choose a ZCU or HPC service node and one of its supported signals, then read its simulated value.</p></details>
+            <div class="control">
+              <label for="someip-target">Signal service node</label>
+              <select id="someip-target"></select>
+            </div>
+            <div class="control">
+              <label for="someip-signal">Available signal</label>
+              <select id="someip-signal" disabled><option value="">Choose a service node first</option></select>
+            </div>
+            <button class="secondary" onclick="readSomeipSignal()">Read signal</button>
+            <p class="result-output" id="someip-result" aria-live="polite">No SOME/IP signal request sent.</p>
+          </section>
+          <section class="panel service-panel">
+            <h3>SOVD</h3>
+            <details class="service-help"><summary>How to use</summary><p>Select a simulated component and diagnostic operation, then send the request through the HPC gateway.</p></details>
+            <div class="control">
+              <label for="sovd-component">Diagnostic component</label>
+              <select id="sovd-component"></select>
+            </div>
+            <div class="control">
+              <label for="sovd-operation">Operation</label>
+              <select id="sovd-operation" onchange="updateSovdOperationControls()">
+                <option value="readDataByIdentifier">Read DID</option>
+                <option value="readDTCInformation">Read DTCs</option>
+                <option value="testerPresent">Tester present</option>
+              </select>
+            </div>
+            <div class="control" id="sovd-did-control">
+              <label for="sovd-data-id">DID (hex)</label>
+              <input id="sovd-data-id" value="F1B0" maxlength="6" autocomplete="off">
+            </div>
+            <button class="secondary" onclick="requestSovdDiagnostics()">Send SOVD request</button>
+            <p class="result-output" id="sovd-result" aria-live="polite">No SOVD request sent.</p>
+          </section>
+        </aside>
+      </div>
+      </section>
+    </main>
+
+    <main id="page-logs" class="page" hidden>
+      <section class="section">
+        <h2>Socket selection</h2>
+        <p id="socket-refresh-status" class="muted">Choose an interface, then view its CAN, UDS, or TCP packets below.</p>
+        <div id="socket-cards" class="socket-grid"></div>
+      </section>
+      <section class="section">
+        <h2>Live packet console</h2>
+        <div class="inline-controls">
+          <div>
+            <label for="log-socket-filter">Socket view</label>
+            <select id="log-socket-filter" onchange="renderLiveLog(lastActivity)"></select>
+          </div>
+          <div>
+            <label for="log-phase-filter">Assessment phase</label>
+            <select id="log-phase-filter" onchange="renderLiveLog(lastActivity)">
+              <option value="all">All phases</option>
+              <option value="before_attack">Baseline checks</option>
+              <option value="attack">Authorized attack</option>
+              <option value="after_attack">Post-attack checks checks</option>
+              <option value="live">Normal live traffic</option>
+            </select>
+          </div>
+          <div>
+            <label for="log-protocol-filter">Packet protocol</label>
+            <select id="log-protocol-filter" onchange="renderLiveLog(lastActivity)">
+              <option value="all">All packets</option>
+              <option value="can">CAN / CAN-FD frames</option>
+              <option value="uds">UDS diagnostics</option>
+              <option value="tcp">TCP / SOME-IP / DoIP</option>
+              <option value="other">Other simulator events</option>
+            </select>
+          </div>
+          <p id="live-refresh-status" class="muted">Connecting to simulator activity…</p>
+        </div>
+        <div class="live-attention" id="live-attention" aria-live="polite">LIVE PACKET MONITOR · Waiting for the first CAN, UDS, or TCP packet…</div>
+        <div class="phase-summary" id="phase-summary">
+          <span class="phase-chip"><strong>Baseline checks</strong> system state and safe probes before testing</span>
+          <span class="phase-chip"><strong>Authorized attack</strong> authorized simulator traffic</span>
+          <span class="phase-chip"><strong>Post-attack checks</strong> recovery and behavior checks</span>
+        </div>
+        <div class="log-legend">
+          <span><strong>Live</strong> regular modeled vehicle message</span>
+          <span><strong>Diagnostic</strong> UDS/SOVD response</span>
+          <span><strong>Authorized attack</strong> simulator-only attack frame or request</span>
+        </div>
+        <div class="table-wrap">
+          <table class="log-table"><thead>
+            <tr><th>Time</th><th>Type / phase</th><th>Socket / protocol</th><th>Source → target</th><th>Message / service IDs</th><th>Result / details</th></tr>
+            <tr class="log-filter-row">
+              <th><input id="log-filter-time" aria-label="Filter by time" placeholder="Filter" oninput="renderLiveLog(lastActivity)"></th>
+              <th><input id="log-filter-type" aria-label="Filter by type or phase" placeholder="Attack, probe…" oninput="renderLiveLog(lastActivity)"></th>
+              <th><input id="log-filter-socket" aria-label="Filter by socket or protocol" placeholder="CAN, UDS, TCP…" oninput="renderLiveLog(lastActivity)"></th>
+              <th><input id="log-filter-route" aria-label="Filter by source or target" placeholder="Source or target" oninput="renderLiveLog(lastActivity)"></th>
+              <th><input id="log-filter-message" aria-label="Filter by message or service ID" placeholder="CAN ID, UDS…" oninput="renderLiveLog(lastActivity)"></th>
+              <th><input id="log-filter-result" aria-label="Filter by result or details" placeholder="Dropped, accepted…" oninput="renderLiveLog(lastActivity)"></th>
+            </tr>
+          </thead>
+            <tbody id="live-log"><tr><td colspan="6" class="empty">Waiting for live traffic and diagnostics…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <main id="page-analytics" class="page" hidden>
+      <section class="section" id="decision-center">
+        <div class="report-actions">
+          <h2>Your scan report</h2>
+          <button id="download-report-md" class="secondary" type="button" onclick="handleReportDownload('markdown')" disabled>Download Markdown</button>
+          <button id="download-report-xlsx" class="secondary" type="button" onclick="handleReportDownload('xlsx')" disabled>Download Excel (.xlsx)</button>
+          <p id="report-export-status" class="report-export-status" role="status" aria-live="polite">Run a scan to enable report downloads.</p>
+        </div>
+        <p id="analytics-empty" class="muted">No scan yet. Go to Setup &amp; controls, choose a node and attack, then run a scan.</p>
+        <div id="analytics-metrics" class="metric-grid"></div>
+        <div class="chart-grid" style="margin-top:16px">
+          <article class="panel chart-card">
+            <div><h3>Before the attack</h3><p class="muted">Observed baseline behavior</p><div id="baseline-pie" class="pie"><div class="pie-center"><span>—</span><small>no scan</small></div></div></div>
+            <ul id="baseline-legend" class="legend"></ul>
+          </article>
+          <article class="panel chart-card">
+            <div><h3>After the attack</h3><p class="muted">Detected weaknesses and new security events</p><div id="post-attack-pie" class="pie"><div class="pie-center"><span>—</span><small>no scan</small></div></div></div>
+            <ul id="post-attack-legend" class="legend"></ul>
+          </article>
+        </div>
+        <p class="muted">The baseline chart compares node behavior; the post-attack chart names detected weaknesses or new security events.</p>
+        <div id="plain-language-report" class="report-list">
+          <div class="report-block"><strong>What happened</strong><p>Run a scan to see the result in plain language.</p></div>
+          <div class="report-block"><strong>Problem found</strong><p>No assessment findings yet.</p></div>
+          <div class="report-block"><strong>What to fix</strong><p>Recommendations will appear here after a scan.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const rolePanels = ['hpc', 'zcu', 'ecu'];
+    const severityRank = {low: 0, medium: 1, high: 2, critical: 3};
+    const attackLabels = {
+      replay_attack: 'T1 - Replay test',
+      spoofing: 'T2 - Spoofing / unauthorized-message test',
+      tampering: 'T3 - Tampering / integrity test',
+      flooding: 'T4 - Flooding / DoS resilience test',
+      unauthorized_diagnostics: 'T5 - Unauthorized diagnostic / service-access test',
+      cross_zone_access: 'T6 - Cross-zone segmentation test',
+      invalid_firmware: 'T7 - Invalid firmware / secure-flash test',
+      ids_auditability_regression: 'T8 - IDS and auditability regression test'
+    };
+    const chartColors = ['#1687c9', '#21a879', '#f0aa32', '#e45b68', '#805ad5', '#25a9a1', '#7894aa', '#ef7c35'];
+    const socketLabels = {
+      all: 'All simulator sockets',
+      'zcu-can': 'ZCU local ECU CAN/CAN-FD socket',
+      'hpc-can': 'HPC local safety ECU CAN/CAN-FD socket',
+      'zcu-hpc-tcp': 'HPC-ZCU authenticated TCP socket',
+      'cloud-hpc-tcp': 'Cloud-HPC authenticated TCP socket'
+    };
+    let profileData = null;
+    let overview = null;
+    let latestScan = null;
+    const selectedTargetsByScan = new Map();
+    let updatingPage = false;
+    let scanInProgress = false;
+    let baselineChecksRequested = false;
+    let otaPackage = null;
+    let otaInProgress = false;
+    let otaCatalog = [];
+    let otaFlashed = false;
+    let lastActivity = {messages: [], security_events: [], diagnostics: [], socket_events: []};
+    const renderedPacketIds = new Set();
+    const completedAssessmentPhases = new Set();
+
+    setOptions(
+      document.getElementById('log-socket-filter'),
+      Object.entries(socketLabels).map(([value, label]) => ({value, label}))
+    );
+
+    function showPage(page) {
+      for (const workspace of ['controls', 'logs', 'analytics']) {
+        document.getElementById(`page-${workspace}`).hidden = workspace !== page;
+        document.getElementById(`tab-${workspace}`).setAttribute(
+          'aria-selected',
+          String(workspace === page)
+        );
+      }
+      document.body.dataset.workspace = page;
+    }
+
+    async function fetchJson(path, options = {}) {
+      const response = await fetch(path, options);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Request failed (${response.status})`);
+      return data;
+    }
+
+    function setOptions(select, values, selectedValues = []) {
+      select.replaceChildren();
+      values.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.value;
+        option.textContent = item.label;
+        option.selected = selectedValues.includes(item.value);
+        select.appendChild(option);
+      });
+    }
+
+    async function loadOtaCatalog() {
+      const select = document.getElementById('ota-package-catalog');
+      try {
+        const data = await fetchJson('/api/ota/packages');
+        otaCatalog = data.packages || [];
+        setOptions(select, [
+          {value: '', label: 'Choose a generated package…'},
+          ...otaCatalog.map(item => ({
+            value: item.path,
+            label: `${item.package_name || `${item.control} · ${item.target_node_id}`} · ${item.version || 'unknown'}${item.disabled_controls.length ? ` · disables ${item.disabled_controls.join(', ')}` : ''}`
+          }))
+        ]);
+      } catch (error) {
+        select.replaceChildren();
+        select.appendChild(new Option(`Package catalog unavailable: ${error.message}`, ''));
+      }
+    }
+
+    async function loadCatalogOtaPackage(packagePath) {
+      if (!packagePath) return;
+      try {
+        const packageData = await fetchJson(`/api/ota/packages/${packagePath.split('/').map(encodeURIComponent).join('/')}`);
+        await loadOtaPackageData(packageData);
+      } catch (error) {
+        document.getElementById('ota-package-preview').textContent = `Could not load catalog package: ${error.message}`;
+      }
+    }
+
+    async function loadOtaPackageData(packageData) {
+      const preview = document.getElementById('ota-package-preview');
+      const button = document.getElementById('ota-flash-button');
+      otaPackage = null;
+      button.disabled = true;
+      const nodeId = packageData?.target_ecu_id;
+      const manifest = packageData?.manifest;
+      const imageHex = packageData?.image_hex;
+      const knownTarget = profileData?.nodes?.some(node => node.node_id === nodeId);
+      if (!knownTarget || !manifest || manifest.ecu_id !== nodeId ||
+          typeof imageHex !== 'string' || !/^(?:[0-9a-fA-F]{2})+$/.test(imageHex) ||
+          imageHex.length > 2097152 || manifest.image_size !== imageHex.length / 2 ||
+          typeof manifest.sha256 !== 'string' || typeof manifest.signature !== 'string' ||
+          typeof packageData.source_hpc_id !== 'string') {
+        throw new Error('Package fields, target node, image size, or manifest are invalid.');
+      }
+      const node = profileData.nodes.find(item => item.node_id === nodeId);
+      const profile = manifest.software_profile;
+      if (!profile || typeof profile !== 'object' || Array.isArray(profile)) {
+        throw new Error('Package manifest must include a software_profile object.');
+      }
+      const targetPanel = {hpc: 'hpc', zone_controller: 'zcu', ecu: 'ecu'}[node.role];
+      if (!targetPanel) {
+        throw new Error(`Package target ${nodeId} has an unsupported node role.`);
+      }
+      const disabled = Object.entries(profile).filter(([, enabled]) => enabled === false).map(([name]) => name);
+      rolePanels.forEach(panel => {
+        document.getElementById(`targets-${panel}`).value =
+          panel === targetPanel ? nodeId : '';
+      });
+      otaPackage = packageData;
+      otaFlashed = false;
+      updateScanControls();
+      preview.classList.remove('error');
+      preview.textContent = `Ready · ${node.display_name} (${nodeId}) · firmware ${manifest.version || 'unspecified'} · ${manifest.image_size} synthetic bytes · scan target selected · ${disabled.length ? `DISABLED: ${disabled.join(', ')}` : 'all declared controls enabled'}`;
+      button.disabled = false;
+    }
+
+    function fillProfilePanels(data) {
+      profileData = data;
+      fillVehicleServiceTargets(data);
+      const roleMap = {hpc: 'hpc', zcu: 'zone_controller', ecu: 'ecu'};
+      rolePanels.forEach(panel => {
+        const nodes = data.nodes.filter(node => node.role === roleMap[panel]);
+        const targets = document.getElementById(`targets-${panel}`);
+        const chosen = targets.value;
+        setOptions(
+          targets,
+          [
+            {value: '', label: `Choose a ${panel.toUpperCase()} target`},
+            ...nodes.map(node => ({value: node.node_id, label: `${node.display_name} · ${node.node_id}`}))
+          ],
+          chosen ? [chosen] : []
+        );
+        targets.onchange = updateScanControls;
+      });
+      setOptions(
+        document.getElementById('attack-type'),
+        data.attack_types
+          .filter(value => Object.prototype.hasOwnProperty.call(attackLabels, value))
+          .map(value => ({value, label: attackLabels[value]}))
+      );
+      updateScanControls();
+    }
+
+    function fillVehicleServiceTargets(data) {
+      const component = document.getElementById('sovd-component');
+      const previousComponent = component.value;
+      const components = data.nodes.filter(node => node.role === 'ecu' || node.role === 'zone_controller' || node.role === 'hpc');
+      setOptions(
+        component,
+        components.map(node => ({
+          value: node.node_id,
+          label: `${node.display_name} · ${node.role}`
+        }))
+      );
+      if (components.some(node => node.node_id === previousComponent)) {
+        component.value = previousComponent;
+      } else {
+        const firstEcu = components.find(node => node.role === 'ecu');
+        if (firstEcu) component.value = firstEcu.node_id;
+      }
+
+      const service = document.getElementById('someip-target');
+      const previousService = service.value;
+      const serviceNodes = data.nodes.filter(
+        node => node.role === 'zone_controller' || node.role === 'hpc'
+      );
+      setOptions(
+        service,
+        serviceNodes.map(node => ({
+          value: node.node_id,
+          label: `${node.display_name} · ${node.role}`
+        }))
+      );
+      if (serviceNodes.some(node => node.node_id === previousService)) {
+        service.value = previousService;
+      }
+      service.onchange = loadSomeipSignalCatalog;
+      loadSomeipSignalCatalog();
+    }
+
+    function updateSovdOperationControls() {
+      document.getElementById('sovd-did-control').hidden =
+        document.getElementById('sovd-operation').value !== 'readDataByIdentifier';
+    }
+
+    async function requestSovdDiagnostics() {
+      const output = document.getElementById('sovd-result');
+      const operation = document.getElementById('sovd-operation').value;
+      const payload = {
+        vehicle_id: 'simulated-vehicle',
+        gateway_hpc_id: 'hpc-vehicle',
+        component_id: document.getElementById('sovd-component').value,
+        operation
+      };
+      if (operation === 'readDataByIdentifier') {
+        payload.data_id = document.getElementById('sovd-data-id').value.trim();
+      }
+      try {
+        const response = await fetch('/api/diagnostics/sovd', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok && !Object.prototype.hasOwnProperty.call(result, 'result')) {
+          throw new Error(result.message || `Request failed (${response.status})`);
+        }
+        output.textContent = JSON.stringify(result, null, 2);
+        await loadActivity();
+      } catch (error) {
+        output.textContent = `SOVD request failed: ${error.message}`;
+      }
+    }
+
+    async function loadOtaPackage(file) {
+      const preview = document.getElementById('ota-package-preview');
+      const button = document.getElementById('ota-flash-button');
+      otaPackage = null;
+      button.disabled = true;
+      if (!file) {
+        preview.textContent = 'Choose a generated OTA package JSON file.';
+        return;
+      }
+      if (file.size > 3145728) {
+        preview.textContent = 'Package file exceeds the 3 MiB JSON limit.';
+        preview.classList.add('error');
+        return;
+      }
+      try {
+        await loadOtaPackageData(JSON.parse(await file.text()));
+      } catch (error) {
+        preview.classList.add('error');
+        preview.textContent = `Could not load OTA package: ${error.message}`;
+      }
+    }
+
+    async function flashOtaPackage() {
+      const button = document.getElementById('ota-flash-button');
+      const output = document.getElementById('ota-result');
+      if (!otaPackage || otaInProgress) return;
+      const targetId = otaPackage.target_ecu_id;
+      if (!window.confirm(`Apply this synthetic OTA package to ${targetId} in the simulator only?`)) return;
+      otaInProgress = true;
+      button.disabled = true;
+      output.classList.remove('error');
+      output.textContent = `Flashing simulator package to ${targetId}…`;
+      try {
+        const response = await fetch('/api/ota/flash', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(otaPackage)
+        });
+        const result = await response.json();
+        const assurance = result.ota_assurance || {};
+        const behavior = result.node_behavior_change || {};
+        const before = behavior.firmware_before || {};
+        const after = behavior.firmware_after || result.firmware || {};
+        const outcome = [
+          `OTA ${result.status || (response.ok ? 'completed' : 'rejected')} · target ${targetId}`,
+          `Firmware: ${before.version || 'unknown'} → ${after.version || 'unknown'}`,
+          `Node-only behavior: ${behavior.status || 'not reported'}`,
+          `Changed controls: ${(behavior.changed_profile_keys || []).join(', ') || 'none reported'}`,
+          `Isolation Forest score: ${behavior.isolation_forest_score_before ?? '—'} → ${behavior.isolation_forest_score_after ?? '—'} (Δ ${behavior.isolation_forest_score_delta ?? '—'})`,
+          result.message || result.reason || ''
+        ].filter(Boolean).join('\n');
+        output.textContent = outcome;
+        output.classList.toggle('error', !response.ok || result.status !== 'completed');
+        otaFlashed = response.ok && result.status === 'completed';
+        const assuranceOutput = document.getElementById('ota-assurance-result');
+        assuranceOutput.textContent = [
+          `OTA assurance: ${(assurance.status || 'not reported').toUpperCase()}`,
+          `Baseline: ${assurance.baseline_status || 'not reported'}`,
+          `Hash: ${assurance.firmware_hash?.status || 'not reported'}`,
+          `Highest severity: ${assurance.highest_severity || 'none'}`,
+          `Findings: ${assurance.finding_count ?? 0}`,
+          ...(assurance.findings || []).slice(0, 5).map(finding => `${finding.severity.toUpperCase()}: ${finding.title}`)
+        ].join('\n');
+        assuranceOutput.classList.toggle('error', assurance.status === 'fail');
+        await Promise.all([loadOverview(), loadActivity()]);
+      } catch (error) {
+        output.classList.add('error');
+        output.textContent = `OTA request failed: ${error.message}`;
+      } finally {
+        otaInProgress = false;
+        button.disabled = !otaPackage;
+      }
+    }
+
+    async function loadSomeipSignalCatalog() {
+      const target = document.getElementById('someip-target').value;
+      const select = document.getElementById('someip-signal');
+      const output = document.getElementById('someip-result');
+      if (!target) {
+        select.disabled = true;
+        select.dataset.targetNodeId = '';
+        setOptions(select, [{value: '', label: 'Choose a service node first'}]);
+        return;
+      }
+      const previousTarget = select.dataset.targetNodeId || '';
+      const previousSignal = select.value;
+      select.disabled = true;
+      setOptions(select, [{value: '', label: 'Loading available signals…'}]);
+      try {
+        const data = await fetchJson(
+          `/api/signals/catalog?target_node_id=${encodeURIComponent(target)}`
+        );
+        if (document.getElementById('someip-target').value !== target) return;
+        if (!Array.isArray(data.signals)) {
+          throw new Error('The selected service returned an invalid signal catalog.');
+        }
+        if (!data.signals.length) {
+          select.dataset.targetNodeId = target;
+          setOptions(select, [{value: '', label: 'No signals are available'}]);
+          output.textContent = `No SOME/IP signals are available for ${target}.`;
+          return;
+        }
+        setOptions(
+          select,
+          data.signals.map(name => ({value: name, label: name})),
+          previousTarget === target && data.signals.includes(previousSignal)
+            ? [previousSignal]
+            : [data.signals[0]]
+        );
+        select.dataset.targetNodeId = target;
+        output.textContent = `Loaded ${data.signals.length} signal(s) for ${target}.`;
+      } catch (error) {
+        if (document.getElementById('someip-target').value !== target) return;
+        select.dataset.targetNodeId = '';
+        setOptions(select, [{value: '', label: `Signals unavailable: ${error.message}`}]);
+        output.textContent = `Could not load SOME/IP signals: ${error.message}`;
+      } finally {
+        if (document.getElementById('someip-target').value === target) {
+          select.disabled = !select.options.length || !select.options[0].value;
+        }
+      }
+    }
+
+    async function readSomeipSignal() {
+      const output = document.getElementById('someip-result');
+      const signalName = document.getElementById('someip-signal').value;
+      if (!signalName) {
+        output.textContent = 'Select an available SOME/IP signal first.';
+        return;
+      }
+      try {
+        const response = await fetch('/api/signals/read', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            target_node_id: document.getElementById('someip-target').value,
+            signal_name: signalName
+          })
+        });
+        const result = await response.json();
+        if (!response.ok && !Object.prototype.hasOwnProperty.call(result, 'found')) {
+          throw new Error(result.message || `Request failed (${response.status})`);
+        }
+        output.textContent = JSON.stringify(result, null, 2);
+        await loadActivity();
+      } catch (error) {
+        output.textContent = `SOME/IP request failed: ${error.message}`;
+      }
+    }
+
+    function selectedTargets() {
+      return rolePanels.flatMap(panel =>
+        document.getElementById(`targets-${panel}`).value
+      ).filter(Boolean);
+    }
+
+    function updateScanControls() {
+      const targets = selectedTargets();
+      const byId = new Map((profileData?.nodes || []).map(node => [node.node_id, node]));
+      const selectedNodes = targets.map(nodeId => byId.get(nodeId)).filter(Boolean);
+      const compatible = profileData?.attack_types || [];
+      const attackSelect = document.getElementById('attack-type');
+      const oldAttack = attackSelect.value;
+      const availableAttacks = Object.keys(attackLabels).filter(value =>
+        compatible.includes(value)
+      );
+      setOptions(attackSelect, availableAttacks.map(value => ({value, label: attackLabels[value]})));
+      if (availableAttacks.includes(oldAttack)) attackSelect.value = oldAttack;
+      const maximumRank = selectedNodes.length ? severityRank.critical : -1;
+      [...document.getElementById('severity').options].forEach(option => {
+        option.disabled = severityRank[option.value] > maximumRank;
+      });
+      const severity = document.getElementById('severity');
+      if (maximumRank >= 0 && severityRank[severity.value] > maximumRank) {
+        severity.value = Object.keys(severityRank).find(level => severityRank[level] === maximumRank);
+      }
+      const runButton = document.getElementById('run-scan-button');
+      runButton.disabled =
+        !targets.length || !compatible.length || overview?.vehicle_service_state !== 'in_service' || updatingPage;
+      
+      const feedback = document.getElementById('scan-feedback');
+      if (!targets.length) feedback.textContent = 'To run the scan, select an HPC, ZCU or ECU.';
+      else if (!compatible.length) feedback.textContent = '';
+      else if (overview?.vehicle_service_state !== 'in_service') feedback.textContent = 'Set the simulator vehicle to in service before running a scan.';
+      else feedback.textContent = '';
+    }
+
+    function loadSelectedProfile(panel) {
+      if (!profileData) return;
+      const nodeId = document.getElementById(`profile-node-${panel}`).value;
+      const node = profileData.nodes.find(item => item.node_id === nodeId);
+      if (!node) return;
+      document.getElementById(`profile-level-${panel}`).value = node.security_level;
+      [...document.getElementById(`profile-attacks-${panel}`).options].forEach(option => {
+        option.selected = node.susceptible_attacks.includes(option.value);
+      });
+    }
+
+    async function saveProfile(panel) {
+      const nodeId = document.getElementById(`profile-node-${panel}`).value;
+      const feedback = document.getElementById('scan-feedback');
+      try {
+        updatingPage = true;
+        updateScanControls();
+        const data = await fetchJson('/api/security/profiles', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            node_id: nodeId,
+            security_level: document.getElementById(`profile-level-${panel}`).value,
+            susceptible_attacks: [...document.getElementById(`profile-attacks-${panel}`).selectedOptions].map(option => option.value)
+          })
+        });
+        const selected = rolePanels.flatMap(key => [...document.getElementById(`targets-${key}`).selectedOptions].map(option => option.value));
+        fillProfilePanels(data);
+        rolePanels.forEach(key => {
+          [...document.getElementById(`targets-${key}`).options].forEach(option => {
+            option.selected = selected.includes(option.value);
+          });
+        });
+        feedback.textContent = `Saved security profile for ${nodeId}.`;
+      } catch (error) {
+        feedback.classList.add('error');
+        feedback.textContent = `Could not save profile: ${error.message}`;
+      } finally {
+        updatingPage = false;
+        updateScanControls();
+      }
+    }
+
+    function toggleVehicleSimulator() {
+      document.getElementById('service-state-select').value =
+        overview?.vehicle_service_state === 'in_service' ? 'out_of_service' : 'in_service';
+      return setVehicleServiceState();
+    }
+
+    function renderSimulatorToggle() {
+      const running = overview?.vehicle_service_state === 'in_service';
+      const button = document.getElementById('sim-toggle-button');
+      button.dataset.running = String(running);
+      button.textContent = running ? 'Vehicle simulator running · Stop' : 'Start vehicle simulator';
+    }
+
+    async function setVehicleServiceState() {
+      const feedback = document.getElementById('scan-feedback');
+      try {
+        const data = await fetchJson('/api/vehicle/service-state', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({service_state: document.getElementById('service-state-select').value})
+        });
+        feedback.classList.remove('error');
+        feedback.textContent = `Simulator service state set to ${data.service_state.replaceAll('_', ' ')}.`;
+        await loadOverview();
+      } catch (error) {
+        feedback.classList.add('error');
+        feedback.textContent = `Could not update service state: ${error.message}`;
+      }
+    }
+
+    async function runScan() {
+      const targets = selectedTargets();
+      const feedback = document.getElementById('scan-feedback');
+      const runBaselineChecks = document.getElementById('run-baseline-checks').checked;
+      if (!targets.length) return;
+      try {
+        baselineChecksRequested = runBaselineChecks;
+        completedAssessmentPhases.clear();
+        scanInProgress = true;
+        renderScanPhaseStatus({
+          scan_phase: runBaselineChecks ? 'before_attack' : 'attack'
+        });
+        document.getElementById('stop-scan-button').hidden = false;
+        updatingPage = true;
+        updateScanControls();
+        feedback.classList.remove('error');
+        feedback.textContent = runBaselineChecks
+          ? 'Running baseline checks (diagnostics and probes), the timed simulator test, then post-test diagnostics…'
+          : 'Running the assessment without baseline checks: simulator test, then post-test diagnostics…';
+        const data = await fetchJson('/api/scan/run', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            attack_type: document.getElementById('attack-type').value,
+            scan_mode: document.getElementById('scan-mode').value,
+            severity: document.getElementById('severity').value,
+            duration_seconds: Number(document.getElementById('attack-duration').value),
+            target_node_ids: targets,
+            run_baseline_checks: runBaselineChecks
+          })
+        });
+        latestScan = data.result?.scan || data.result || null;
+        if (latestScan) {
+          latestScan.target_summary = {
+            ...(latestScan.target_summary || {}),
+            target_node_ids: targets
+          };
+          if (latestScan.scan_id) selectedTargetsByScan.set(latestScan.scan_id, targets);
+          feedback.textContent = 'Generating the final assessment report…';
+          renderScanPhaseStatus({scan_phase: 'report'});
+        }
+        renderAnalytics(latestScan);
+        if (latestScan) completedAssessmentPhases.add('report');
+        feedback.textContent = `Scan finished: ${latestScan?.status || latestScan?.scan_status || 'result received'}. Download the report as Markdown or Excel workbook.`;
+        await Promise.all([loadOverview(), loadActivity()]);
+      } catch (error) {
+        feedback.classList.add('error');
+        feedback.textContent = `Scan failed: ${error.message}`;
+        feedback.scrollIntoView({block: 'center'});
+      } finally {
+        scanInProgress = false;
+        renderScanPhaseStatus({scan_phase: 'idle'});
+        document.getElementById('stop-scan-button').hidden = true;
+        updatingPage = false;
+        updateScanControls();
+      }
+    }
+
+    async function stopAttack() {
+      const button = document.getElementById('stop-scan-button');
+      const feedback = document.getElementById('scan-feedback');
+      button.disabled = true;
+      try {
+        const result = await fetchJson('/api/scan/stop', {method: 'POST'});
+        feedback.classList.remove('error');
+        feedback.textContent = result.message || 'Stop requested; post-attack diagnostics will still run.';
+      } catch (error) {
+        feedback.classList.add('error');
+        feedback.textContent = `Could not stop the simulated attack: ${error.message}`;
+        button.disabled = false;
+      }
+    }
+
+    async function loadOverview() {
+      try {
+        const response = await fetchJson('/api/status');
+        overview = response.cloud_overview || {};
+        document.getElementById('cloud-status').textContent =
+          response.status === 'ok' ? `Cloud connected · ${overview.vehicle_service_state || 'unknown'}` : 'Cloud degraded';
+        document.getElementById('service-state-select').value =
+          overview.vehicle_service_state === 'in_service' ? 'in_service' : 'out_of_service';
+        renderSimulatorToggle();
+        const scan = overview.last_scan || null;
+        if (scan?.scan_id || scan?.threat_report || scan?.before_attack) {
+          const selectedTargets = selectedTargetsByScan.get(scan.scan_id);
+          if (selectedTargets) {
+            scan.target_summary = {
+              ...(scan.target_summary || {}),
+              target_node_ids: selectedTargets
+            };
+          }
+          latestScan = scan;
+          if (!scanInProgress) {
+            ['before_attack', 'attack', 'after_attack', 'report']
+              .forEach(phase => completedAssessmentPhases.add(phase));
+            renderScanPhaseStatus({scan_phase: 'idle'});
+          }
+          renderAnalytics(scan);
+        }
+        updateScanControls();
+      } catch (error) {
+        document.getElementById('cloud-status').textContent = `Cloud unavailable: ${error.message}`;
+        overview = null;
+        renderSimulatorToggle();
+        updateScanControls();
+      }
+    }
+
+    async function loadProfiles() {
+      try {
+        const data = await fetchJson('/api/security/profiles');
+        fillProfilePanels(data);
+      } catch (error) {
+        document.getElementById('scan-feedback').classList.add('error');
+        document.getElementById('scan-feedback').textContent = `Could not load node profiles: ${error.message}`;
+      }
+    }
+
+    async function loadSockets() {
+      const status = document.getElementById('socket-refresh-status');
+      try {
+        const data = await fetchJson('/api/network/observability');
+        const container = document.getElementById('socket-cards');
+        container.replaceChildren();
+        data.sockets.forEach(socket => {
+          const socketId = socket.socket_id;
+          if (!Object.prototype.hasOwnProperty.call(socketLabels, socketId)) return;
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'socket';
+          card.dataset.socketId = socketId;
+          card.setAttribute('aria-pressed', String(document.getElementById('log-socket-filter').value === socketId));
+          card.onclick = () => {
+            document.getElementById('log-socket-filter').value = socketId;
+            renderLiveLog(lastActivity);
+          };
+          const title = document.createElement('strong');
+          title.textContent = `${socket.name} · ${socket.status}`;
+          const details = document.createElement('span');
+          details.textContent = `${socket.transport} · ${socket.host}:${socket.port} · ${(socket.protocols || []).join(', ')}`;
+          const direction = document.createElement('p');
+          direction.className = 'muted';
+          direction.textContent = `${socket.direction} · ${socket.security}`;
+          card.append(title, details, direction);
+          container.appendChild(card);
+        });
+        status.textContent = `${data.network.node_count} simulated nodes · ${data.network.zone_count} zones · four monitored paths; select one to filter the live log.`;
+      } catch (error) {
+        status.classList.add('error');
+        status.textContent = `Could not read socket inventory: ${error.message}`;
+      }
+    }
+
+    function renderLiveLog(activity) {
+      const body = document.getElementById('live-log');
+      const selectedSocket = document.getElementById('log-socket-filter').value;
+      const selectedPhase = document.getElementById('log-phase-filter').value;
+      const selectedProtocol = document.getElementById('log-protocol-filter').value;
+      const columnFilters = {
+        time: document.getElementById('log-filter-time').value.trim().toLowerCase(),
+        type: document.getElementById('log-filter-type').value.trim().toLowerCase(),
+        socket: document.getElementById('log-filter-socket').value.trim().toLowerCase(),
+        route: document.getElementById('log-filter-route').value.trim().toLowerCase(),
+        message: document.getElementById('log-filter-message').value.trim().toLowerCase(),
+        result: document.getElementById('log-filter-result').value.trim().toLowerCase()
+      };
+      const phaseFor = item => {
+        if (item.phase === 'before_attack' || item.phase === 'protocol_probes') return 'before_attack';
+        if (item.phase === 'attack' || item.phase === 'after_attack') return item.phase;
+        if (item.attack_generated === true || item.event_type === 'attack_marker') return 'attack';
+        return 'live';
+      };
+      const protocolFor = item => {
+        const transport = String(item.transport_type || '').toLowerCase();
+        if (item.can_id_hex && transport.includes('uds')) return 'uds';
+        if (item.can_id_hex) return 'can';
+        if (item.kind === 'diagnostic' || transport.includes('uds')) return 'uds';
+        if (item.someip_service_id || transport.includes('tcp') || transport.includes('some/ip') || transport.includes('doip')) return 'tcp';
+        return 'other';
+      };
+      const rawEntries = [
+        ...(activity.messages || []).map(message => ({
+          ...message,
+          kind: 'traffic',
+          timestamp: message.timestamp || 0
+        })),
+        ...(activity.diagnostics || []).map(item => ({
+          ...item,
+          kind: item.event_type || 'diagnostic'
+        })),
+        ...(activity.security_events || []).map(event => ({
+          ...event,
+          kind: event.action === 'simulated_test_event' ? 'attack' : 'probe',
+          source_node_id: event.node_id,
+          target_node_id: event.detected_at_node_id,
+          detail: `${event.category || 'security event'} · ${event.action || 'rejected'} · ${event.detail || ''}`
+        })),
+        ...(activity.socket_events || []).map(event => ({
+          ...event,
+          kind: event.event_type === 'attack_marker' || event.attack_generated === true
+            ? 'attack'
+            : event.action === 'dropped'
+            ? event.phase === 'protocol_probes' ? 'probe' : 'security'
+            : 'traffic',
+          detail: event.event_type === 'attack_marker'
+            ? event.detail
+            : `${event.action || 'observed'}${event.detail ? ` · ${event.detail}` : ''}`
+        }))
+      ];
+      const matchesColumnFilters = item => {
+        const phase = phaseFor(item);
+        const protocol = protocolFor(item);
+        const values = {
+          time: item.timestamp ? new Date(item.timestamp * 1000).toLocaleTimeString() : '',
+          type: `${item.kind || ''} ${phase}`,
+          socket: `${socketLabels[item.socket_id] || item.socket_id || ''} ${protocol} ${item.transport_type || ''}`,
+          route: `${item.source_node_id || item.node_id || ''} ${item.target_node_id || item.detected_at_node_id || ''}`,
+          message: `${item.message_name || ''} ${item.message_id || ''} ${item.can_id_hex || ''} ${item.service_id || ''} ${item.someip_service_id || ''}`,
+          result: `${item.action || ''} ${item.status || ''} ${item.detail || ''} ${item.severity || ''}`
+        };
+        return Object.entries(columnFilters).every(([column, filter]) =>
+          !filter || values[column].toLowerCase().includes(filter)
+        );
+      };
+      const entries = rawEntries
+        .filter(item => selectedSocket === 'all' || item.socket_id === selectedSocket)
+        .filter(item => selectedPhase === 'all' || phaseFor(item) === selectedPhase)
+        .filter(item => selectedProtocol === 'all' || protocolFor(item) === selectedProtocol)
+        .filter(matchesColumnFilters)
+        .sort((left, right) => Number(right.timestamp || 0) - Number(left.timestamp || 0))
+        .slice(0, 300);
+      body.replaceChildren();
+      const phaseCounts = {before_attack: 0, protocol_probes: 0, attack: 0, after_attack: 0, live: 0};
+      entries.forEach(item => { phaseCounts[phaseFor(item)] += 1; });
+      document.getElementById('phase-summary').replaceChildren(
+        ...[
+          ['Baseline checks', 'before_attack'],
+          ['Authorized attack', 'attack'],
+          ['Post-attack checks', 'after_attack'],
+          ['Live traffic', 'live']
+        ].map(([label, phase]) => {
+          const chip = document.createElement('span');
+          chip.className = 'phase-chip';
+          chip.innerHTML = `<strong>${label}</strong> ${phaseCounts[phase]} event(s)`;
+          return chip;
+        })
+      );
+      const attention = entries.find(item => item.kind === 'attack' || ['dropped', 'rejected', 'denied'].includes(item.action)) || entries[0];
+      const attentionElement = document.getElementById('live-attention');
+      attentionElement.className = 'live-attention';
+      if (attention) {
+        const protocol = protocolFor(attention).toUpperCase().replace('CAN', 'CAN/CAN-FD');
+        const isAttack = attention.kind === 'attack';
+        const isRejection = !isAttack && ['dropped', 'rejected', 'denied'].includes(attention.action);
+        if (isAttack) attentionElement.classList.add('attack');
+        if (isRejection) attentionElement.classList.add('rejection');
+        attentionElement.textContent = `${isAttack ? 'ATTENTION · AUTHORIZED ATTACK' : isRejection ? 'ATTENTION · SECURITY REJECTION' : 'LIVE PACKET'} · ${protocol} · ${attention.source_node_id || attention.node_id || 'simulator'} → ${attention.target_node_id || attention.detected_at_node_id || 'vehicle network'} · ${attention.message_name || attention.message_id || attention.detail || 'packet observed'}`;
+      } else {
+        attentionElement.textContent = 'LIVE PACKET MONITOR · Waiting for the first CAN, UDS, or TCP packet…';
+      }
+      entries.forEach(item => {
+        const row = body.insertRow();
+        row.dataset.kind = item.kind;
+        const phase = phaseFor(item);
+        const protocol = protocolFor(item);
+        row.dataset.phase = phase;
+        row.dataset.protocol = protocol;
+        const eventId = item.event_id || `${item.kind}:${item.timestamp}:${item.message_id}:${item.detail}`;
+        if (!renderedPacketIds.has(eventId)) row.classList.add('fresh');
+        renderedPacketIds.add(eventId);
+        const isTraffic = item.kind === 'traffic';
+        const isDiagnostic = item.kind === 'diagnostic';
+        const isPhase = item.kind === 'phase';
+        const isSocketEvent = item.event_type === 'socket_frame' || item.event_type === 'attack_marker';
+        const typeLabel = phase === 'attack'
+          ? 'AUTHORIZED ATTACK'
+          : phase === 'protocol_probes'
+          ? 'PRE-ATTACK PROBE'
+          : phase === 'before_attack'
+          ? 'BASELINE CHECK'
+          : phase === 'after_attack'
+          ? 'POST-ATTACK CHECK'
+          : item.kind === 'attack'
+          ? 'AUTHORIZED ATTACK'
+          : item.kind === 'probe'
+          ? 'PROTOCOL PROBE'
+          : item.kind.toUpperCase();
+        const endpoint = isSocketEvent
+          ? `${item.source_node_id || '—'} → ${item.target_node_id || '—'}`
+          : isTraffic
+          ? `${item.source_node_id || '—'} → ${item.received_by_node_id || 'broadcast'}`
+          : `${item.source_node_id || item.node_id || '—'} → ${item.target_node_id || item.detected_at_node_id || '—'}`;
+        const identifiers = isSocketEvent && item.can_id_hex
+          ? `CAN ID ${item.can_id_hex} · DLC ${item.dlc ?? '—'} · ${item.message_name || 'CAN frame'}${item.frame_count ? ` · frame ${item.frame_index}/${item.frame_count} · message ${item.message_length_bytes} bytes` : ''}`
+          : isSocketEvent && item.someip_service_id
+          ? `SOME/IP service ${item.someip_service_id} · method ${item.someip_method_id || '—'} · length ${item.packet_length ?? '—'}`
+          : isDiagnostic
+          ? `UDS ${item.service_id || '—'} → ${item.response_service_id || 'no response'} · msg ${item.message_id || '—'}`
+          : isTraffic
+          ? `${item.message_name || 'message'} · ${item.service_id ? `service ${item.service_id} · method ${item.method_id || '—'} · ` : ''}${item.message_id || '—'} · seq ${item.sequence ?? '—'}`
+          : `${item.message_name || item.category || '—'}${item.message_id ? ` · ${item.message_id}` : ''}${item.message_length_bytes !== null && item.message_length_bytes !== undefined ? ` · ${item.message_length_bytes} bytes` : ''}`;
+        const details = isSocketEvent && item.can_id_hex
+          ? `Data (${item.dlc ?? 0} bytes): ${item.data_hex || 'payload omitted by privacy filter'} · ${item.action || 'observed'}${item.detail ? ` · ${item.detail}` : ''}`
+          : isSocketEvent
+          ? `${item.transport_type || 'TCP'} · ${item.action || 'observed'}${item.firmware_version ? ` · firmware ${item.firmware_version}` : ''}${item.update_framework ? ` · ${item.update_framework}` : ''}${item.previous_partition || item.active_partition ? ` · partition ${item.previous_partition || '—'} → ${item.active_partition || '—'}` : ''}${item.detail ? ` · ${item.detail}` : ''}`
+          : isTraffic
+          ? Object.entries(item.signals || {}).map(([name, value]) => `${name}=${value}`).join(', ') || `period ${item.periodicity_ms ?? '—'} ms`
+          : isDiagnostic
+          ? `${item.status || 'unknown'}${item.nrc ? ` · NRC ${item.nrc}` : ''}${item.latency_ms !== null && item.latency_ms !== undefined ? ` · ${item.latency_ms} ms` : ''}`
+          : `${item.severity ? `${item.severity.toUpperCase()} · ` : ''}${item.detail || item.status || '—'}`;
+        [
+          item.timestamp ? new Date(item.timestamp * 1000).toLocaleTimeString() : '—',
+          `${typeLabel}${phase === 'live' ? ' · normal operation' : ''}`,
+          `${protocol === 'can' ? 'CAN/CAN-FD' : protocol.toUpperCase()} · ${item.socket_id ? socketLabels[item.socket_id] || item.socket_id : 'scan control'}${item.transport_type ? ` · ${item.transport_type}` : ''}`,
+          endpoint,
+          identifiers,
+          details
+        ].forEach(value => { row.insertCell().textContent = value; });
+      });
+      if (!body.rows.length) {
+        body.innerHTML = '<tr><td colspan="6" class="empty">No events for this socket yet. Traffic refreshes every 2.5 seconds.</td></tr>';
+      }
+      document.querySelectorAll('#socket-cards .socket').forEach(card => {
+        card.setAttribute('aria-pressed', String(selectedSocket === card.dataset.socketId));
+      });
+    }
+
+    function renderScanPhaseStatus(data) {
+      const phase = data.scan_phase || 'idle';
+      const phaseUpdatedAt = Number(data.scan_phase_updated_at);
+      const phaseIsRecent = Number.isFinite(phaseUpdatedAt)
+        && Date.now() / 1000 - phaseUpdatedAt >= 0
+        && Date.now() / 1000 - phaseUpdatedAt <= 120;
+      const isKnownActivePhase = [
+        'before_attack',
+        'protocol_probes',
+        'attack',
+        'after_attack',
+        'report'
+      ].includes(phase);
+      const isRunning = scanInProgress
+        || data.attack_active === true
+        || (phaseIsRecent && isKnownActivePhase);
+      const labels = {
+        before_attack: 'BASELINE CHECKS RUNNING · Collecting pre-attack behavior and diagnostics',
+        protocol_probes: 'BASELINE CHECKS RUNNING · Safe validation probes, not an attack',
+        attack: 'AUTHORIZED ATTACK RUNNING · Simulator-only traffic is being sent',
+        after_attack: 'POST-ATTACK VALIDATION RUNNING · Checking response and recovery',
+        report: 'FINAL REPORT GENERATION · Preparing downloadable Markdown and Excel report',
+        idle: scanInProgress ? 'ASSESSMENT FINALIZING · Preparing the result' : 'ASSESSMENT STATUS · No scan running'
+      };
+      const banner = document.getElementById('scan-phase-banner');
+      const displayPhase = isRunning ? phase : 'idle';
+      banner.dataset.phase = displayPhase;
+      banner.dataset.running = String(isRunning);
+      const statusText = labels[displayPhase] || `ASSESSMENT STATUS · ${displayPhase.replaceAll('_', ' ')}`;
+      if (banner.textContent !== statusText) banner.textContent = statusText;
+      renderPhaseProgress(displayPhase, data, isRunning);
+    }
+
+    function renderPhaseProgress(phase, data, isRunning) {
+      const phases = [
+        'before_attack',
+        'attack',
+        'after_attack',
+        'report'
+      ];
+      if (isRunning) {
+        for (const item of [
+          ...(data.messages || []),
+          ...(data.security_events || []),
+          ...(data.diagnostics || []),
+          ...(data.socket_events || [])
+        ]) {
+          const itemPhase = item.phase === 'protocol_probes' ? 'before_attack' : item.phase;
+          if (phases.includes(itemPhase)) completedAssessmentPhases.add(itemPhase);
+        }
+      }
+      const progressPhase = isRunning
+        ? phase === 'protocol_probes' ? 'before_attack' : phase
+        : 'idle';
+      if (phases.includes(progressPhase)) {
+        const activeIndex = phases.indexOf(progressPhase);
+        phases.slice(0, activeIndex).forEach(item => completedAssessmentPhases.add(item));
+      }
+      document.querySelectorAll('#phase-progress [data-phase]').forEach(step => {
+        const stepPhase = step.dataset.phase;
+        const checkbox = step.querySelector('input');
+        const skipped = stepPhase === 'before_attack' && !baselineChecksRequested;
+        const active = progressPhase === stepPhase;
+        if (skipped && scanInProgress) completedAssessmentPhases.add('before_attack');
+        const completed = completedAssessmentPhases.has(stepPhase);
+        step.dataset.state = active ? 'active' : completed ? 'done' : 'pending';
+        checkbox.checked = completed;
+        checkbox.indeterminate = active;
+        const note = step.querySelector('.phase-note');
+        if (note) note.textContent = skipped && completed ? '· skipped' : '';
+      });
+      const activeIndex = phases.indexOf(progressPhase);
+      let completedPrefix = 0;
+      while (completedPrefix < phases.length && completedAssessmentPhases.has(phases[completedPrefix])) {
+        completedPrefix += 1;
+      }
+      const progressPhases = phases;
+      const currentIndex = progressPhases.indexOf(progressPhase);
+      const progress = currentIndex >= 0
+        ? currentIndex / (progressPhases.length - 1) * 100
+        : Math.min(completedPrefix, progressPhases.length - 1) / (progressPhases.length - 1) * 100;
+      document.getElementById('phase-progress').style.setProperty('--progress', `${progress}%`);
+    }
+
+    async function loadActivity() {
+      try {
+        const data = await fetchJson('/api/network/activity?limit=200');
+        lastActivity = data;
+        renderLiveLog(data);
+        const stopButton = document.getElementById('stop-scan-button');
+        if (scanInProgress) stopButton.disabled = !data.attack_active;
+        const phase = (data.scan_phase || 'idle').replaceAll('_', ' ');
+        document.getElementById('live-refresh-status').textContent =
+          `Phase: ${phase}${data.attack_active ? ' · attack running' : ''} · refreshed ${data.observed_at || ''}. Simulator-only activity; no physical vehicle traffic.`;
+        renderScanPhaseStatus(data);
+      } catch (error) {
+        document.getElementById('live-refresh-status').textContent = `Live activity unavailable: ${error.message}`;
+      }
+    }
+
+    function renderPie(elementId, legendId, entries, centerLabel) {
+      const pie = document.getElementById(elementId);
+      const legend = document.getElementById(legendId);
+      legend.replaceChildren();
+      const usable = entries.filter(item => Number(item.value) > 0);
+      const total = usable.reduce((sum, item) => sum + Number(item.value), 0);
+      if (!total) {
+        pie.style.background = 'conic-gradient(#dcecf5 0 100%)';
+        pie.querySelector('.pie-center').innerHTML = '<span>—</span><small>no data</small>';
+        return;
+      }
+      let position = 0;
+      const segments = usable.map((item, index) => {
+        const end = position + Number(item.value) * 100 / total;
+        const segment = `${chartColors[index % chartColors.length]} ${position}% ${end}%`;
+        const li = document.createElement('li');
+        const swatch = document.createElement('span');
+        swatch.className = 'swatch';
+        swatch.style.background = chartColors[index % chartColors.length];
+        li.append(swatch, document.createTextNode(`${item.label}: ${item.value} (${(Number(item.value) * 100 / total).toFixed(1)}%)`));
+        legend.appendChild(li);
+        position = end;
+        return segment;
+      });
+      pie.style.background = `conic-gradient(${segments.join(',')})`;
+      pie.querySelector('.pie-center').innerHTML = `<span>${total}</span><small>${centerLabel}</small>`;
+    }
+
+    function addMetric(container, label, value) {
+      const card = document.createElement('div');
+      card.className = 'metric';
+      const caption = document.createElement('span');
+      caption.textContent = label;
+      const strong = document.createElement('strong');
+      strong.textContent = value;
+      card.append(caption, strong);
+      container.appendChild(card);
+    }
+
+    function renderBehaviorPie(elementId, legendId, phase) {
+      const nodeCount = Math.max(0, Number(phase.network_node_count) || 0);
+      const changes = Math.min(nodeCount, Math.max(0, Number(phase.behavior_variation_count) || 0));
+      renderPie(elementId, legendId, [
+        {label: 'No behavior change detected', value: nodeCount - changes},
+        {label: 'Behavior changed', value: changes}
+      ], 'nodes');
+    }
+
+    const securityEventLabels = {
+      replay_detected: 'Replay or stale message detected',
+      freshness_failure: 'Message freshness check failed (stale or clock-skewed message)',
+      invalid_authentication: 'Message authentication or source validation failure',
+      signal_out_of_range: 'Signal value outside its configured range',
+      periodicity_violation: 'Message rate or timing violation',
+      message_flood: 'Message rate exceeded the configured flood threshold',
+      malformed_data: 'Malformed message or invalid payload length',
+      diagnostic_access_denied: 'Unauthorized diagnostic request denied',
+      invalid_route: 'Unauthorized network route rejected',
+      secure_flash_failure: 'Firmware signature or secure-flash validation failure',
+      someip_header_mismatch: 'SOME/IP header validation failure',
+      can_id_mismatch: 'CAN identifier validation failure',
+      security_access_bypass: 'Diagnostic security-access failure'
+    };
+
+    function positiveCountDelta(after, before, key) {
+      return Math.max(0, (Number(after[key]) || 0) - (Number(before[key]) || 0));
+    }
+
+    function newSecurityEventCounts(before, after) {
+      const beforeCategories = before.security_event_categories || {};
+      const afterCategories = after.security_event_categories || {};
+      const counts = Object.fromEntries(
+        Object.keys(afterCategories)
+          .map(category => [
+            category,
+            Math.max(
+              0,
+              (Number(afterCategories[category]) || 0)
+                - (Number(beforeCategories[category]) || 0)
+            )
+          ])
+          .filter(([, count]) => count > 0)
+      );
+      const categorizedCount = Object.values(counts).reduce(
+        (total, count) => total + count,
+        0
+      );
+      const reportedCount = positiveCountDelta(
+        {security_event_count: after.security_event_count},
+        {security_event_count: before.security_event_count},
+        'security_event_count'
+      );
+      if (reportedCount > categorizedCount) {
+        counts['other_security_event'] =
+          (counts['other_security_event'] || 0) + reportedCount - categorizedCount;
+      }
+      return counts;
+    }
+
+    function renderPostAttackPie(phase, scan, before) {
+      const legend = document.getElementById('post-attack-legend');
+      const findings = Array.isArray(phase.ota_weakness_findings)
+        ? phase.ota_weakness_findings
+        : [];
+      if (findings.length) {
+        renderPie(
+          'post-attack-pie',
+          'post-attack-legend',
+          findings.map(finding => ({
+            label: `${finding.weakness_id} · ${finding.title}`,
+            value: Math.max(1, Number(finding.affected_target_count) || 0)
+          })),
+          'weaknesses'
+        );
+        return;
+      }
+
+      const eventCounts = newSecurityEventCounts(before, phase);
+      const eventEntries = Object.entries(eventCounts).map(
+        ([category, count]) => ({
+          label: securityEventLabels[category] || category.replaceAll('_', ' '),
+          value: count
+        })
+      );
+      const attackStatus = scan.attack_summary?.status || scan.status;
+      if (attackStatus && attackStatus !== 'completed') {
+        eventEntries.push({
+          label: `Assessment execution ${attackStatus.replaceAll('_', ' ')}`,
+          value: 1
+        });
+      }
+      if (!eventEntries.length) {
+        const behaviorChanges = positiveCountDelta(
+          phase,
+          before,
+          'behavior_variation_count'
+        );
+        if (behaviorChanges) {
+          eventEntries.push({
+            label: 'Behavior changes not mapped to a known weakness',
+            value: behaviorChanges
+          });
+        }
+      }
+      if (eventEntries.length) {
+        renderPie(
+          'post-attack-pie',
+          'post-attack-legend',
+          eventEntries,
+          'issues'
+        );
+        return;
+      }
+
+      renderPie('post-attack-pie', 'post-attack-legend', [], 'issues');
+      const item = document.createElement('li');
+      item.textContent = 'No OTA weakness or new security event detected';
+      legend.appendChild(item);
+    }
+
+    function renderPlainLanguageReport(scan) {
+      const container = document.getElementById('plain-language-report');
+      container.replaceChildren();
+      const before = scan.before_attack || {};
+      const after = scan.after_attack || {};
+      const attack = scan.attack_summary || {};
+      const report = scan.threat_report || {};
+      const selectedNodes = scan.target_summary?.target_node_ids || [];
+      const targetNames = selectedNodes.map(node => node.replaceAll('-', ' ')).join(', ');
+      const scanStatus = attack.status || scan.scan_status || scan.status || 'unknown';
+      const attackLabel = (scan.attack_type || 'security test').replaceAll('_', ' ');
+      const outcome = scanStatus === 'completed'
+        ? `The ${attackLabel} test completed${attack.attack_frame_count !== undefined ? ` and sent ${attack.attack_frame_count} test frame(s)` : ''}.`
+        : `The ${attackLabel} test did not complete (${scanStatus}). Its effect could not be fully assessed.`;
+      const baselineText = scan.baseline_checks_run === false
+        ? 'Pre-attack behavior was observed, but baseline diagnostic checks and probes were skipped.'
+        : 'Pre-attack behavior and the requested baseline checks were collected.';
+      const changedBefore = Number(before.behavior_variation_count) || 0;
+      const changedAfter = Number(after.behavior_variation_count) || 0;
+      const otaFindings = Array.isArray(after.ota_weakness_findings)
+        ? after.ota_weakness_findings
+        : [];
+      const eventCounts = newSecurityEventCounts(before, after);
+      const newSecurityEventCount = Object.values(eventCounts).reduce(
+        (total, count) => total + count,
+        0
+      );
+      const otaPostureText = otaFindings.length
+        ? `${otaFindings.length} deployed OTA weakness(es) found. ${otaFindings.map(finding => `${finding.weakness_id} — ${finding.title} [control: ${(finding.affected_controls || []).join(', ') || 'not specified'}; relevant checks: ${(finding.relevant_test_ids || []).join(', ') || 'not specified'}]`).join('; ')}.`
+        : 'No disabled OTA security controls were detected on the selected scan target(s).';
+      const problems = otaFindings.map(
+        finding => `${finding.weakness_id} — ${finding.title} (control: ${(finding.affected_controls || []).join(', ') || 'not specified'})`
+      );
+      Object.entries(eventCounts).forEach(([category, count]) => {
+        const label = securityEventLabels[category] || category.replaceAll('_', ' ');
+        problems.push(`Security event: ${label} (${count})`);
+      });
+      const failedDiagnostics = positiveCountDelta(
+        after,
+        before,
+        'uds_failed_count'
+      );
+      const newTimeouts = positiveCountDelta(
+        after,
+        before,
+        'diagnostic_timeout_count'
+      );
+      if (failedDiagnostics) {
+        problems.push(`Diagnostic failures increased by ${failedDiagnostics}`);
+      }
+      if (newTimeouts) {
+        problems.push(`Diagnostic timeouts increased by ${newTimeouts}`);
+      }
+      if (scanStatus !== 'completed') {
+        const failureDetail = scan.summary || scan.network_summary;
+        problems.push(
+          `Attack assessment ${scanStatus}${failureDetail ? `: ${failureDetail}` : ''}`
+        );
+      }
+      if (!problems.length && changedAfter > changedBefore) {
+        problems.push(
+          `${changedAfter - changedBefore} additional node(s) showed behavior changes; no specific weakness category was reported.`
+        );
+      }
+      const issueText = problems.length
+        ? problems.join('; ')
+        : `No OTA weakness or new security/diagnostic failure was detected. ${changedAfter} node(s) showed behavior changes versus ${changedBefore} at baseline.`;
+      const recommendations = Array.isArray(report.recommendations)
+        ? report.recommendations.filter(item => typeof item === 'string' && item.trim())
+        : [];
+      const fixText = recommendations.length
+        ? recommendations.join(' ')
+        : 'No specific fix was returned by the assessment. Review the attack events for this node with the vehicle security team before approving the change.';
+      const blocks = [
+        ['What happened', `${targetNames ? `Target node: ${targetNames}. ` : 'Target node name was not retained for this scan. '}${outcome} ${baselineText}`],
+        ['Installed OTA security posture', otaPostureText],
+        ['Problem found', issueText],
+        ['What to fix', fixText]
+      ];
+      blocks.forEach(([title, text]) => {
+        const block = document.createElement('div');
+        block.className = 'report-block';
+        if (title === 'Problem found' && problems.length) {
+          block.classList.add('problem-found');
+          block.setAttribute('role', 'alert');
+        }
+        const heading = document.createElement('strong');
+        heading.textContent = title;
+        const paragraph = document.createElement('p');
+        paragraph.textContent = text;
+        block.append(heading, paragraph);
+        container.appendChild(block);
+      });
+    }
+
+    function scanReportRows(scan) {
+      const before = scan.before_attack || {};
+      const after = scan.after_attack || {};
+      const status = scan.attack_summary?.status
+        || scan.scan_status
+        || scan.status
+        || 'not reported';
+      const targetNames = scan.target_summary?.target_node_ids || [];
+      const rows = [
+        {section: 'Assessment', item: 'Scan ID', value: scan.scan_id || 'not reported'},
+        {section: 'Assessment', item: 'Targets', value: targetNames.join(', ') || `${scan.target_summary?.target_count ?? 0} selected node(s)`},
+        {section: 'Assessment', item: 'Attack scenario', value: scan.attack_type || 'not reported'},
+        {section: 'Assessment', item: 'Severity', value: scan.severity || 'not reported'},
+        {section: 'Assessment', item: 'Duration (seconds)', value: scan.duration_seconds ?? 'not reported'},
+        {section: 'Assessment', item: 'Result', value: status},
+        {section: 'Assessment', item: 'Risk after test', value: scan.risk_level || after.risk_level || 'not reported'},
+        {section: 'Baseline', item: 'Behavior variations', value: before.behavior_variation_count ?? 'not reported'},
+        {section: 'After test', item: 'Behavior variations', value: after.behavior_variation_count ?? 'not reported'},
+        {section: 'After test', item: 'Diagnostic failures', value: after.uds_failed_count ?? 'not reported'},
+        {section: 'After test', item: 'Diagnostic timeouts', value: after.diagnostic_timeout_count ?? 'not reported'}
+      ];
+      const findings = Array.isArray(after.ota_weakness_findings)
+        ? after.ota_weakness_findings
+        : [];
+      findings.forEach(finding => rows.push({
+        section: 'Weakness finding',
+        item: `${finding.weakness_id || 'Unknown'} ${finding.title || 'Untitled finding'}`,
+        value: finding.severity || 'not reported',
+        details: [
+          `Controls: ${(finding.affected_controls || []).join(', ') || 'not specified'}`,
+          `Relevant tests: ${(finding.relevant_test_ids || []).join(', ') || 'not specified'}`,
+          `Affected targets: ${finding.affected_target_count ?? 'not reported'}`
+        ].join('; ')
+      }));
+      Object.entries(newSecurityEventCounts(before, after)).forEach(([category, count]) =>
+        rows.push({
+          section: 'New security event',
+          item: securityEventLabels[category] || category.replaceAll('_', ' '),
+          value: count
+        })
+      );
+      const threatReport = scan.threat_report || {};
+      if (threatReport.executive_summary) {
+        rows.push({section: 'Threat assessment', item: 'Executive summary', value: threatReport.executive_summary});
+      }
+      if (threatReport.technical_explanation) {
+        rows.push({section: 'Threat assessment', item: 'Technical explanation', value: threatReport.technical_explanation});
+      }
+      (Array.isArray(threatReport.recommendations) ? threatReport.recommendations : [])
+        .forEach((recommendation, index) => rows.push({
+          section: 'Recommendation',
+          item: `Recommendation ${index + 1}`,
+          value: recommendation
+        }));
+      return rows;
+    }
+
+    function markdownCell(value) {
+      return String(value ?? 'not reported').replaceAll('|', '\\|').replaceAll('\n', '<br>');
+    }
+
+    async function downloadScanReport(format) {
+      if (!latestScan) return;
+      const rows = scanReportRows(latestScan);
+      const filenameId = String(latestScan.scan_id || 'latest-scan')
+        .replace(/[^a-zA-Z0-9._-]/g, '_');
+      const timestamp = new Date().toISOString();
+      let contents;
+      let mimeType;
+      let extension;
+      let blob;
+      if (format === 'markdown') {
+        contents = [
+          '# Automotive Cybersecurity Assessment',
+          '',
+          `Generated: ${timestamp}`,
+          '',
+          '> Simulator assessment only. This report does not establish production-vehicle exploitability or formal compliance.',
+          '',
+          '| Section | Item | Result | Details |',
+          '| --- | --- | --- | --- |',
+          ...rows.map(row => `| ${markdownCell(row.section)} | ${markdownCell(row.item)} | ${markdownCell(row.value)} | ${markdownCell(row.details)} |`),
+          ''
+        ].join('\n');
+        mimeType = 'text/markdown;charset=utf-8';
+        extension = 'md';
+        blob = new Blob([contents], {type: mimeType});
+      } else if (format === 'xlsx') {
+        const response = await fetch('/api/reports/xlsx', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            scan_id: latestScan.scan_id || 'latest-scan',
+            rows
+          })
+        });
+        if (!response.ok) {
+          let message = `Report export failed (${response.status})`;
+          try {
+            const error = await response.json();
+            if (error.message) message = error.message;
+          } catch (error) {
+            message = `${message}: ${error.message}`;
+          }
+          throw new Error(message);
+        }
+        mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        extension = 'xlsx';
+        blob = await response.blob();
+      } else {
+        throw new Error(`Unsupported report format: ${format}`);
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `cybersecurity-assessment-${filenameId}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      document.getElementById('report-export-status').textContent =
+        `Downloaded ${extension.toUpperCase()} report for scan ${latestScan.scan_id || 'latest-scan'}.`;
+      return true;
+    }
+
+    async function handleReportDownload(format) {
+      const buttons = [
+        document.getElementById('download-report-md'),
+        document.getElementById('download-report-xlsx')
+      ];
+      const status = document.getElementById('report-export-status');
+      buttons.forEach(button => { button.disabled = true; });
+      status.textContent = `Generating ${format === 'xlsx' ? 'Excel' : 'Markdown'} report…`;
+      try {
+        await downloadScanReport(format);
+      } catch (error) {
+        status.textContent = `Could not generate report: ${error.message}`;
+        status.classList.add('error');
+      } finally {
+        buttons.forEach(button => { button.disabled = !latestScan; });
+      }
+    }
+
+    function renderAnalytics(scan) {
+      const metrics = document.getElementById('analytics-metrics');
+      metrics.replaceChildren();
+      const exportButtons = [
+        document.getElementById('download-report-md'),
+        document.getElementById('download-report-xlsx')
+      ];
+      exportButtons.forEach(button => { button.disabled = !scan; });
+      document.getElementById('report-export-status').textContent = scan
+        ? 'Final step: export this assessment as Markdown or an Excel workbook (.xlsx).'
+        : 'Run a scan to enable report downloads.';
+      if (!scan || !(scan.scan_id || scan.before_attack || scan.threat_report)) {
+        document.getElementById('analytics-empty').hidden = false;
+        return;
+      }
+      document.getElementById('analytics-empty').hidden = true;
+      const before = scan.before_attack || {};
+      const after = scan.after_attack || {};
+      const targets = scan.target_summary?.target_node_ids || [];
+      const targetText = targets.length
+        ? targets.map(node => node.replaceAll('-', ' ')).join(', ')
+        : `${scan.target_summary?.target_count ?? scan.attack_summary?.affected_node_count ?? 0} selected node(s)`;
+      const attackLabel = `${(scan.attack_type || 'not reported').replaceAll('_', ' ')} · ${(scan.severity || 'severity not reported').replaceAll('_', ' ')} · ${scan.duration_seconds ?? '—'} sec`;
+      const attackStatus = scan.attack_summary?.status || scan.scan_status || scan.status || 'not reported';
+      addMetric(metrics, 'Target node(s)', targetText);
+      addMetric(metrics, 'Attack used', attackLabel);
+      addMetric(metrics, 'Attack result', attackStatus.replaceAll('_', ' '));
+      addMetric(metrics, 'Risk after test', (scan.risk_level || after.risk_level || 'not reported').replaceAll('_', ' '));
+      const otaFindings = Array.isArray(after.ota_weakness_findings)
+        ? after.ota_weakness_findings
+        : [];
+      const eventCounts = newSecurityEventCounts(before, after);
+      const newSecurityEventCount = Object.values(eventCounts).reduce(
+        (total, count) => total + count,
+        0
+      );
+      const failedDiagnostics = positiveCountDelta(
+        after,
+        before,
+        'uds_failed_count'
+      );
+      const newTimeouts = positiveCountDelta(
+        after,
+        before,
+        'diagnostic_timeout_count'
+      );
+      const executionFailure = attackStatus === 'completed' ? 0 : 1;
+      const problemsFound =
+        otaFindings.length +
+        newSecurityEventCount +
+        failedDiagnostics +
+        newTimeouts +
+        executionFailure;
+      addMetric(metrics, 'Weaknesses / failures found', `${problemsFound} found`);
+      renderBehaviorPie('baseline-pie', 'baseline-legend', before);
+      renderPostAttackPie(after, scan, before);
+      renderPlainLanguageReport(scan);
+    }
+
+    loadOtaCatalog();
+    loadOverview();
+    loadProfiles();
+    loadSockets();
+    loadActivity();
+    setInterval(loadOverview, 5000);
+    setInterval(loadSockets, 30000);
+    setInterval(loadActivity, 750);
+  </script>
+</body>
+</html>

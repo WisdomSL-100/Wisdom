@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a5db011a2a7f0b1af78f09b0e4952c0f6a04a8b18ae1cf86ed4ebc432c536cbb9",
+  "manifest": {
+    "ecu_id": "ecu-battery",
+    "image_size": 58,
+    "sha256": "2953e40c63b2172ff013c898aff0f94112848fad61ff3bd70362573c72a8555a",
+    "signature": "5dc2493ce2ccd03a9d8f022c658dae6b5996adda2fcca5accbd80c010807b295",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": false,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W10 - IDS detection / audit logging - ecu-battery",
+  "source_hpc_id": "hpc-vehicle",
+  "target_ecu_id": "ecu-battery"
+}

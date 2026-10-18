@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313abc5c345f914b7d399f6b001e57490fcd3b56c7273a7dff4b6b472c9797e751bd",
+  "manifest": {
+    "ecu_id": "hpc-adas",
+    "image_size": 58,
+    "sha256": "7bd101efadbbb584324bd8f5f1bfdb4a9538baacda9c0bdb3499effdf09542e3",
+    "signature": "efd8cd7f6ef08945119b80b2412e2c1203a5c77f2d89604a65c8c0c4d9a1e2b2",
+    "software_profile": {
+      "anti_downgrade": false,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W9 - Firmware downgrade protection - hpc-adas",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "hpc-adas"
+}

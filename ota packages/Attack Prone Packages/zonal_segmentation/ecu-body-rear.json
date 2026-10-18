@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a84fe27ffa0dd3ad8c6d9b5384e4509c32d3f1c5f5b6afc9b541ca7aadece1625",
+  "manifest": {
+    "ecu_id": "ecu-body-rear",
+    "image_size": 58,
+    "sha256": "1c2144800e0ceab53f38c010d46628e96b20cb3c2580663a0ad66053904984a3",
+    "signature": "04e43ce65d0cd4f49f8c8a953e06f54fc41be38445d4c4a4fdeaea61175e9caf",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": false
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W7 - Gateway zonal segmentation - ecu-body-rear",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-rear",
+  "zcu_id": "zcu-rear-left"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313aeea85f820b961c6a30fd63ec26110601c123fd3dfe9e5913ab2f68fb5bd15303",
+  "manifest": {
+    "ecu_id": "ecu-adas-radar",
+    "image_size": 58,
+    "sha256": "009ff9b75248854962ecf43c6cd1c77596565c789cfdea7487be6397199949fa",
+    "signature": "1f31d10ad907639a40b55d8ce1f0e74963eed43909e41abbf3481855dc2a6f3c",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": false,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W3 - Unauthorized diagnostic access - ecu-adas-radar",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "ecu-adas-radar"
+}

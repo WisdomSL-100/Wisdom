@@ -1,0 +1,29 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a31a538519cd5fecda28bb2648a6ee5339d1fe7ea77964e111de9fad5ec925443",
+  "manifest": {
+    "ecu_id": "ecu-body-front",
+    "image_size": 58,
+    "sha256": "83fd0ceb4568f76f12aa1a167cf8d04e6835025303913742cc8761ab04dbb9f4",
+    "signature": "c7da75a7d076a1beb0973adfc1cfb52c19cd3366d568f1a06b7a35dfed929c36",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - ecu-body-front",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "ecu-body-front",
+  "zcu_id": "zcu-front-right"
+}

@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313a38322e2fd78fdf7d915663426c82a49eea07b087f1a26643c0904499ef4380e6",
+  "manifest": {
+    "ecu_id": "zcu-front-left",
+    "image_size": 58,
+    "sha256": "950b01749ed8b3e584ec7c7b4416e7f7449a11b505cab1136e2382412206dee6",
+    "signature": "e5963f95d2ae7090fc1b4357a9dc73a7eb6b1216d887457600c3e0e8587723ab",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": true,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": false,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W4 - Secure communication integrity - zcu-front-left",
+  "source_hpc_id": "hpc-adas",
+  "target_ecu_id": "zcu-front-left"
+}

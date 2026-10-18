@@ -1,0 +1,306 @@
+version: '3.9'
+
+x-node-environment: &node-environment
+  APP_MODE: vehicle-node
+  PORT: "5001"
+  SOCKET_PORT: "6001"
+  ZCU_CAN_SOCKET_PORT: "6003"
+  ZCU_HPC_TCP_SOCKET_PORT: "6004"
+  CLOUD_HPC_SOCKET_PORT: "6005"
+  VEHICLE_SOCKET_SECRET: ${VEHICLE_SOCKET_SECRET:?Set VEHICLE_SOCKET_SECRET to a random value of at least 32 characters}
+
+x-node-service: &node-service
+  build:
+    context: ./vehicle-network_Simulator
+    dockerfile: Dockerfile
+  env_file:
+    - ./config/gcp.env
+  networks:
+    - automotive-net
+  expose:
+    - "6001"
+  healthcheck:
+    test: ["CMD-SHELL", "python -c \"import socket; socket.create_connection(('localhost', 6001), timeout=2).close()\""]
+    interval: 10s
+    timeout: 3s
+    retries: 5
+    start_period: 5s
+
+x-controller-service: &controller-service
+  <<: *node-service
+  expose:
+    - "6001"
+    - "6003"
+    - "6004"
+  healthcheck:
+    test: ["CMD-SHELL", "python -c \"import socket; [socket.create_connection(('localhost', port), timeout=2).close() for port in (6001, 6003, 6004)]\""]
+    interval: 10s
+    timeout: 3s
+    retries: 5
+    start_period: 5s
+
+x-hpc-service: &hpc-service
+  <<: *controller-service
+  expose:
+    - "6001"
+    - "6003"
+    - "6004"
+    - "6005"
+  healthcheck:
+    test: ["CMD-SHELL", "python -c \"import socket; [socket.create_connection(('localhost', port), timeout=2).close() for port in (6001, 6003, 6004, 6005)]\""]
+    interval: 10s
+    timeout: 3s
+    retries: 5
+    start_period: 5s
+
+services:
+
+  vehicle-node-ecu-powertrain:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-powertrain
+  vehicle-node-ecu-battery:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-battery
+  vehicle-node-ecu-adas-radar:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-adas-radar
+  vehicle-node-ecu-front-camera:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-front-camera
+  vehicle-node-ecu-rear-camera:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-rear-camera
+  vehicle-node-ecu-body-front:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-body-front
+  vehicle-node-ecu-body-rear:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-body-rear
+  vehicle-node-ecu-telematics:
+    <<: *node-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: ecu-telematics
+  vehicle-node-zcu-front-left:
+    <<: *controller-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: zcu-front-left
+  vehicle-node-zcu-front-right:
+    <<: *controller-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: zcu-front-right
+  vehicle-node-zcu-rear-left:
+    <<: *controller-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: zcu-rear-left
+  vehicle-node-zcu-rear-right:
+    <<: *controller-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: zcu-rear-right
+  vehicle-node-hpc-vehicle:
+    <<: *hpc-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: hpc-vehicle
+  vehicle-node-hpc-adas:
+    <<: *hpc-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: hpc-adas
+  vehicle-node-hpc-cockpit:
+    <<: *hpc-service
+    environment:
+      <<: *node-environment
+      VEHICLE_NODE_ID: hpc-cockpit
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: automotive-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      APP_ENV: development
+      CLOUD_APP_URL: http://cloud-app:5003
+      OTA_PACKAGE_ROOT: /app/ota-packages
+      PORT: "3000"
+    volumes:
+      - ./ota packages:/app/ota-packages:ro
+    depends_on:
+      cloud-app:
+        condition: service_healthy
+    networks:
+      - automotive-net
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:3000/health', timeout=2)\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  vehicle-network:
+    build:
+      context: ./vehicle-network_Simulator
+      dockerfile: Dockerfile
+    container_name: vehicle-network
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./config/gcp.env
+    environment:
+      APP_MODE: vehicle-network
+      PORT: "5001"
+      SOCKET_PORT: "6001"
+      VEHICLE_SECURITY_PROFILE_PATH: /data/security_profiles.json
+      VEHICLE_SOCKET_SECRET: ${VEHICLE_SOCKET_SECRET:?Set VEHICLE_SOCKET_SECRET to a random value of at least 32 characters}
+      VEHICLE_NODE_SOCKET_ROUTING: "1"
+      VEHICLE_NODE_HOST_PREFIX: vehicle-node-
+      VEHICLE_NODE_SOCKET_PORT: "6001"
+    networks:
+      - automotive-net
+    volumes:
+      - vehicle-network-config:/data
+    expose:
+      - "6001"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket, urllib.request; urllib.request.urlopen('http://localhost:5001/health', timeout=2); socket.create_connection(('localhost', 6001), timeout=2).close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  vehicle-central-compute:
+    build:
+      context: ./vehicle-central-compute
+      dockerfile: Dockerfile
+    container_name: vehicle-central-compute
+    ports:
+      - "5002:5002"
+    env_file:
+      - ./config/gcp.env
+    environment:
+      APP_MODE: central-compute
+      PORT: "5002"
+      VEHICLE_NETWORK_SOCKET_HOST: vehicle-network
+      VEHICLE_NETWORK_SOCKET_PORT: "6001"
+      VEHICLE_SOCKET_SECRET: ${VEHICLE_SOCKET_SECRET:?Set VEHICLE_SOCKET_SECRET to a random value of at least 32 characters}
+      VEHICLE_NODE_SOCKET_ROUTING: "1"
+      VEHICLE_NODE_HOST_PREFIX: vehicle-node-
+      VEHICLE_NODE_SOCKET_PORT: "6001"
+      CENTRAL_TLS_SERVER_CERT: /run/tls/central-server.crt
+      CENTRAL_TLS_SERVER_KEY: /run/tls/central-server.key
+      CENTRAL_TLS_CLIENT_CA: /run/tls/ca.crt
+      CENTRAL_TLS_ALLOWED_CLIENT_CN: cloud-app
+      CENTRAL_SERVICE_JWT_SECRET: ${CENTRAL_SERVICE_JWT_SECRET:?Run config/bootstrap_dev_security.sh to create local secrets}
+    depends_on:
+      vehicle-network:
+        condition: service_healthy
+      vehicle-node-ecu-powertrain:
+        condition: service_healthy
+      vehicle-node-ecu-battery:
+        condition: service_healthy
+      vehicle-node-ecu-adas-radar:
+        condition: service_healthy
+      vehicle-node-ecu-front-camera:
+        condition: service_healthy
+      vehicle-node-ecu-rear-camera:
+        condition: service_healthy
+      vehicle-node-ecu-body-front:
+        condition: service_healthy
+      vehicle-node-ecu-body-rear:
+        condition: service_healthy
+      vehicle-node-ecu-telematics:
+        condition: service_healthy
+      vehicle-node-zcu-front-left:
+        condition: service_healthy
+      vehicle-node-zcu-front-right:
+        condition: service_healthy
+      vehicle-node-zcu-rear-left:
+        condition: service_healthy
+      vehicle-node-zcu-rear-right:
+        condition: service_healthy
+      vehicle-node-hpc-vehicle:
+        condition: service_healthy
+      vehicle-node-hpc-adas:
+        condition: service_healthy
+      vehicle-node-hpc-cockpit:
+        condition: service_healthy
+    networks:
+      - automotive-net
+    volumes:
+      - ./config/tls/ca.crt:/run/tls/ca.crt:ro
+      - ./config/tls/central-server.crt:/run/tls/central-server.crt:ro
+      - ./config/tls/central-server.key:/run/tls/central-server.key:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import socket; socket.create_connection(('localhost', 5002), timeout=2).close()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  cloud-app:
+    build:
+      context: ./cloud-app
+      dockerfile: Dockerfile
+    container_name: cloud-app
+    ports:
+      - "5003:5003"
+    env_file:
+      - ./config/gcp.env
+    environment:
+      APP_MODE: cloud-app
+      PORT: "5003"
+      CENTRAL_COMPUTE_URL: https://vehicle-central-compute:5002
+      CENTRAL_TLS_CA: /run/tls/ca.crt
+      CENTRAL_TLS_CLIENT_CERT: /run/tls/cloud-client.crt
+      CENTRAL_TLS_CLIENT_KEY: /run/tls/cloud-client.key
+      CENTRAL_SERVICE_JWT_SECRET: ${CENTRAL_SERVICE_JWT_SECRET:?Run config/bootstrap_dev_security.sh to create local secrets}
+      SCAN_HISTORY_ENCRYPTION_KEY: ${SCAN_HISTORY_ENCRYPTION_KEY:?Run config/bootstrap_dev_security.sh to create local secrets}
+      SCAN_RETENTION_DAYS: ${SCAN_RETENTION_DAYS:-30}
+      CLOUD_REGION: ${CLOUD_REGION:-unspecified}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      DATA_DIR: /data
+    depends_on:
+      vehicle-central-compute:
+        condition: service_healthy
+    networks:
+      - automotive-net
+    volumes:
+      - cloud-scan-data:/data
+      - ./config/tls/ca.crt:/run/tls/ca.crt:ro
+      - ./config/tls/cloud-client.crt:/run/tls/cloud-client.crt:ro
+      - ./config/tls/cloud-client.key:/run/tls/cloud-client.key:ro
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5003/health', timeout=2)\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+networks:
+  automotive-net:
+    driver: bridge
+
+volumes:
+  cloud-scan-data:
+  vehicle-network-config:

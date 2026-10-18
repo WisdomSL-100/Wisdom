@@ -1,0 +1,28 @@
+{
+  "image_hex": "53494d554c415445442d4f54412d4649524d574152452d76313ad5589144b61e8a19326ba4b223c709c3ba2a9f606915b0b4b74d5255f609adb6",
+  "manifest": {
+    "ecu_id": "hpc-adas",
+    "image_size": 58,
+    "sha256": "e8df7b5d007135ceafb25cdcc8a44dc06137984cd62fc6567a6a26707512fe70",
+    "signature": "2b9187a4549ec3604a4142723ae7f2ad6ed9986e14c7af92f05429c74a2e54cc",
+    "software_profile": {
+      "anti_downgrade": true,
+      "diagnostic_access_control": false,
+      "firmware_signature_required": true,
+      "freshness_protection": true,
+      "ids_logging": true,
+      "message_authentication": true,
+      "message_id_validation": true,
+      "range_validation": true,
+      "rate_limiting": true,
+      "replay_protection": true,
+      "security_access_required": true,
+      "timing_validation": true,
+      "zonal_segmentation": true
+    },
+    "version": "SIM-2.0.0"
+  },
+  "package_name": "W3 - Unauthorized diagnostic access - hpc-adas",
+  "source_hpc_id": "hpc-cockpit",
+  "target_ecu_id": "hpc-adas"
+}

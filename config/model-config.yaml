@@ -1,0 +1,31 @@
+models:
+  isolation_forest:
+    name: isolation_forest_vehicle_anomaly
+    framework: sklearn
+    mode: edge_and_fleet_inference
+    contamination: auto
+  fleet:
+    name: fleet_isolation_forest
+    framework: sklearn
+    mode: cloud_fleet_analysis
+    contamination: 0.02
+
+feature_groups:
+  network:
+    - message_frequency
+    - payload_size
+    - ecu_id_rate
+    - latency_ms
+    - bus_load
+    - error_rate
+  diagnostics:
+    - diagnostic_session_state
+    - unauthorized_access_attempts
+    - invalid_response_count
+    - timing_anomaly_score
+
+alert_levels:
+  low: "monitor"
+  medium: "investigate"
+  high: "block_and_alert"
+  critical: "isolate_and_escalate"
