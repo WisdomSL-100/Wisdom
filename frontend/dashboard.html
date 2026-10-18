@@ -1098,23 +1098,6 @@
         document.getElementById('service-state-select').value =
           overview.vehicle_service_state === 'in_service' ? 'in_service' : 'out_of_service';
         renderSimulatorToggle();
-        const scan = overview.last_scan || null;
-        if (!scanInProgress && (scan?.scan_id || scan?.threat_report || scan?.before_attack)) {
-          const selectedTargets = selectedTargetsByScan.get(scan.scan_id);
-          if (selectedTargets) {
-            scan.target_summary = {
-              ...(scan.target_summary || {}),
-              target_node_ids: selectedTargets
-            };
-          }
-          latestScan = scan;
-          if (!scanInProgress) {
-            ['before_attack', 'attack', 'after_attack', 'report']
-              .forEach(phase => completedAssessmentPhases.add(phase));
-            renderScanPhaseStatus({scan_phase: 'idle'});
-          }
-          renderAnalytics(scan);
-        }
         updateScanControls();
       } catch (error) {
         document.getElementById('cloud-status').textContent = `Cloud unavailable: ${error.message}`;

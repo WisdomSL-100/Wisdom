@@ -172,7 +172,7 @@ class FrontendDashboardTests(unittest.TestCase):
         self.assertIn('id="run-baseline-checks"', html)
         self.assertIn("Run baseline checks before the attack", html)
         self.assertIn("latestScan = null;\n      renderAnalytics(null);", html)
-        self.assertIn("if (!scanInProgress && (scan?.scan_id", html)
+        self.assertNotIn("overview.last_scan", html)
         self.assertNotIn("workflow-strip", html)
         self.assertIn('id="log-filter-message"', html)
         self.assertIn('id="log-filter-route"', html)
