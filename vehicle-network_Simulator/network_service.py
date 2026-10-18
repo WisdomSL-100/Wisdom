@@ -4465,9 +4465,7 @@ def _execute_authorized_attack_test(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 def run_network_diagnostics() -> Dict[str, Any]:
     started = time.perf_counter()
-    successful_count = 0
-    failed_count = 0
-    active_dtc_count = 0
+    scan_phase = SCAN_ACTIVITY_PHASE
     response_categories = {
         "positive": 0,
         "negative": 0,
@@ -4475,7 +4473,8 @@ def run_network_diagnostics() -> Dict[str, Any]:
         "transport_error": 0,
     }
     latencies_ms = []
-    for component_id in NODE_INSTANCES:
+
+    def probe_component(component_id: str) -> tuple[str, Dict[str, Any] | None, float, str | None]:
         request_started = time.perf_counter()
         try:
             result = _dispatch_sovd_request(
@@ -4485,111 +4484,133 @@ def run_network_diagnostics() -> Dict[str, Any]:
                     "vehicle_id": "simulated-vehicle",
                 }
             )
-            latencies_ms.append((time.perf_counter() - request_started) * 1000)
-            uds_result = result.get("result", {})
-            if SCAN_ACTIVITY_PHASE in {"before_attack", "after_attack"}:
-                response_bytes = uds_result.get("response_bytes", [])
-                response_service_id = (
-                    f"0x{response_bytes[0]:02X}"
-                    if isinstance(response_bytes, list)
-                    and response_bytes
-                    and type(response_bytes[0]) is int
+            return (
+                component_id,
+                result,
+                (time.perf_counter() - request_started) * 1000,
+                None,
+            )
+        except (TimeoutError, socket.timeout):
+            return (
+                component_id,
+                None,
+                (time.perf_counter() - request_started) * 1000,
+                "timeout",
+            )
+        except (OSError, RuntimeError, ValueError):
+            return (
+                component_id,
+                None,
+                (time.perf_counter() - request_started) * 1000,
+                "transport_error",
+            )
+
+    component_ids = list(NODE_INSTANCES)
+    with ThreadPoolExecutor(max_workers=min(5, max(1, len(component_ids)))) as executor:
+        outcomes = list(executor.map(probe_component, component_ids))
+
+    successful_count = 0
+    failed_count = 0
+    active_dtc_count = 0
+    for component_id, result, latency_ms, error_category in outcomes:
+        if error_category:
+            failed_count += 1
+            response_categories[error_category] += 1
+            if scan_phase in {"before_attack", "after_attack"}:
+                record_diagnostic_failure(component_id, error_category, scan_phase)
+            continue
+
+        latencies_ms.append(latency_ms)
+        uds_result = result.get("result", {})
+        if scan_phase in {"before_attack", "after_attack"}:
+            response_bytes = uds_result.get("response_bytes", [])
+            response_service_id = (
+                f"0x{response_bytes[0]:02X}"
+                if isinstance(response_bytes, list)
+                and response_bytes
+                and type(response_bytes[0]) is int
+                else None
+            )
+            target = NODE_INSTANCES[component_id]
+            routing = result.get("routing", {})
+            route_transports = (
+                routing.get("transports", [])
+                if isinstance(routing, dict)
+                else []
+            )
+            route_transport = (
+                route_transports[-1]
+                if isinstance(route_transports, list)
+                and route_transports
+                and isinstance(route_transports[-1], str)
+                else None
+            )
+            logical_address = getattr(
+                type(target), "DOIP_LOGICAL_ADDRESS", None
+            )
+            transport = (
+                route_transport
+                or (
+                    target.PROTOCOL
+                    if getattr(target, "ROLE", "") == "ecu"
+                    and getattr(target, "SAFETY_CRITICAL", False)
+                    else "DoIP over Automotive Ethernet"
+                    if getattr(target, "ROLE", "") != "hpc"
+                    else "Local UDS"
+                )
+            )
+            transport_chain = " -> ".join(route_transports)
+            if transport_chain:
+                transport = transport_chain
+            if getattr(target, "ROLE", "") == "ecu" and getattr(
+                target, "SAFETY_CRITICAL", False
+            ):
+                message_id = getattr(target, "MESSAGE_ID", None)
+            elif "DoIP" in transport:
+                message_id = (
+                    f"0x{logical_address:04X}"
+                    if type(logical_address) is int
                     else None
-                )
-                target = NODE_INSTANCES[component_id]
-                routing = result.get("routing", {})
-                route_transports = (
-                    routing.get("transports", [])
-                    if isinstance(routing, dict)
-                    else []
-                )
-                route_transport = (
-                    route_transports[-1]
-                    if isinstance(route_transports, list)
-                    and route_transports
-                    and isinstance(route_transports[-1], str)
-                    else None
-                )
-                logical_address = getattr(
-                    type(target), "DOIP_LOGICAL_ADDRESS", None
-                )
-                transport = (
-                    route_transport
-                    or (
-                        target.PROTOCOL
-                        if getattr(target, "ROLE", "") == "ecu"
-                        and getattr(target, "SAFETY_CRITICAL", False)
-                        else "DoIP over Automotive Ethernet"
-                        if getattr(target, "ROLE", "") != "hpc"
-                        else "Local UDS"
-                    )
-                )
-                transport_chain = " -> ".join(route_transports)
-                if transport_chain:
-                    transport = transport_chain
-                if getattr(target, "ROLE", "") == "ecu" and getattr(
-                    target, "SAFETY_CRITICAL", False
-                ):
-                    message_id = getattr(target, "MESSAGE_ID", None)
-                elif "DoIP" in transport:
-                    message_id = (
-                        f"0x{logical_address:04X}"
-                        if type(logical_address) is int
-                        else None
-                    )
-                else:
-                    message_id = getattr(
-                        type(target), "SOMEIP_SERVICE_ID", None
-                    )
-                    if type(message_id) is int:
-                        message_id = f"0x{message_id:04X}"
-                socket_id = _socket_id_for_node(component_id)
-                with DIAGNOSTIC_ACTIVITY_LOCK:
-                    DIAGNOSTIC_ACTIVITY.append(
-                        {
-                            "event_type": "diagnostic",
-                            "timestamp": time.time(),
-                            "phase": SCAN_ACTIVITY_PHASE,
-                            "source_node_id": "hpc-vehicle",
-                            "target_node_id": component_id,
-                            "transport_type": transport,
-                            "socket_id": socket_id,
-                            "direction": "request / response",
-                            "message_id": message_id,
-                            "service_id": "0x19",
-                            "response_service_id": response_service_id,
-                            "status": (
-                                "positive"
-                                if uds_result.get("positive_response")
-                                else "negative"
-                            ),
-                            "nrc": uds_result.get("nrc"),
-                            "latency_ms": round(
-                                (time.perf_counter() - request_started) * 1000,
-                                3,
-                            ),
-                        }
-                    )
-                    del DIAGNOSTIC_ACTIVITY[:-1000]
-            if uds_result.get("positive_response"):
-                successful_count += 1
-                response_categories["positive"] += 1
-                active_dtc_count += sum(
-                    1 for dtc in uds_result.get("dtcs", []) if dtc.get("active")
                 )
             else:
-                failed_count += 1
-                response_categories["negative"] += 1
-        except (TimeoutError, socket.timeout):
+                message_id = getattr(
+                    type(target), "SOMEIP_SERVICE_ID", None
+                )
+                if type(message_id) is int:
+                    message_id = f"0x{message_id:04X}"
+            with DIAGNOSTIC_ACTIVITY_LOCK:
+                DIAGNOSTIC_ACTIVITY.append(
+                    {
+                        "event_type": "diagnostic",
+                        "timestamp": time.time(),
+                        "phase": scan_phase,
+                        "source_node_id": "hpc-vehicle",
+                        "target_node_id": component_id,
+                        "transport_type": transport,
+                        "socket_id": _socket_id_for_node(component_id),
+                        "direction": "request / response",
+                        "message_id": message_id,
+                        "service_id": "0x19",
+                        "response_service_id": response_service_id,
+                        "status": (
+                            "positive"
+                            if uds_result.get("positive_response")
+                            else "negative"
+                        ),
+                        "nrc": uds_result.get("nrc"),
+                        "latency_ms": round(latency_ms, 3),
+                    }
+                )
+                del DIAGNOSTIC_ACTIVITY[:-1000]
+        if uds_result.get("positive_response"):
+            successful_count += 1
+            response_categories["positive"] += 1
+            active_dtc_count += sum(
+                1 for dtc in uds_result.get("dtcs", []) if dtc.get("active")
+            )
+        else:
             failed_count += 1
-            response_categories["timeout"] += 1
-            if SCAN_ACTIVITY_PHASE in {"before_attack", "after_attack"}:
-                record_diagnostic_failure(component_id, "timeout")
-        except (OSError, RuntimeError, ValueError):
-            failed_count += 1
-            response_categories["transport_error"] += 1
-            if SCAN_ACTIVITY_PHASE in {"before_attack", "after_attack"}:
-                record_diagnostic_failure(component_id, "transport_error")
+            response_categories["negative"] += 1
     component_count = len(NODE_INSTANCES)
     return {
         "component_count": component_count,
@@ -4613,7 +4634,9 @@ def run_network_diagnostics() -> Dict[str, Any]:
     }
 
 
-def record_diagnostic_failure(component_id: str, status: str) -> None:
+def record_diagnostic_failure(
+    component_id: str, status: str, phase: str | None = None
+) -> None:
     target = NODE_INSTANCES[component_id]
     is_can = (
         getattr(target, "ROLE", "") == "ecu"
@@ -4631,7 +4654,7 @@ def record_diagnostic_failure(component_id: str, status: str) -> None:
             {
                 "event_type": "diagnostic",
                 "timestamp": time.time(),
-                "phase": SCAN_ACTIVITY_PHASE,
+                "phase": phase or SCAN_ACTIVITY_PHASE,
                 "source_node_id": "hpc-vehicle",
                 "target_node_id": component_id,
                 "transport_type": transport,

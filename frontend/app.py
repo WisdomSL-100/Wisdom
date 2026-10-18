@@ -861,7 +861,7 @@ def network_observability():
     try:
         response = requests.get(
             f"{CLOUD_APP_URL}/api/network/observability",
-            timeout=20,
+            timeout=16,
         )
         return jsonify(response.json()), response.status_code
     except Exception as exc:
@@ -882,7 +882,7 @@ def network_activity():
         response = requests.get(
             f"{CLOUD_APP_URL}/api/network/activity",
             params={"limit": int(limit)},
-            timeout=10,
+            timeout=16,
         )
         return jsonify(response.json()), response.status_code
     except Exception as exc:

@@ -127,10 +127,11 @@ class CloudServiceRouteTests(unittest.TestCase):
 
         with patch.object(
             self.cloud, "central_request", return_value=central_response
-        ):
+        ) as central_request:
             response = self.client.get("/api/network/activity?limit=25")
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(central_request.call_args.kwargs["timeout"], 13)
         event = response.get_json()["socket_events"][0]
         self.assertEqual(event["socket_id"], "zcu-hpc-tcp")
         self.assertEqual(event["message_id"], "TransferData")

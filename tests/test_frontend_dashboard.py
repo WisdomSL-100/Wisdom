@@ -185,7 +185,9 @@ class FrontendDashboardTests(unittest.TestCase):
         self.assertNotIn("workflow-strip", html)
         self.assertIn('id="log-filter-message"', html)
         self.assertIn('id="log-filter-route"', html)
-        self.assertIn("setInterval(loadActivity, 750)", html)
+        self.assertIn("let activityRequestInFlight = false;", html)
+        self.assertIn("if (activityRequestInFlight) return;", html)
+        self.assertIn("setInterval(loadActivity, 1500)", html)
         self.assertIn("Authorized attack</strong> simulator-only attack frame or request", html)
         self.assertIn("PRE-ATTACK PROBE", html)
         self.assertIn("AUTHORIZED ATTACK", html)
@@ -256,6 +258,7 @@ class FrontendDashboardTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(get.call_args.kwargs["params"], {"limit": 25})
+        self.assertEqual(get.call_args.kwargs["timeout"], 16)
 
     def test_live_activity_route_rejects_invalid_limit(self):
         for value in ("0", "201", "invalid"):

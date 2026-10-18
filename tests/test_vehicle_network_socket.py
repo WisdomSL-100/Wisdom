@@ -1022,6 +1022,46 @@ class VehicleNetworkSocketTests(unittest.TestCase):
             all(item["event_type"] == "diagnostic" for item in diagnostics)
         )
 
+    def test_network_diagnostics_probe_components_concurrently_with_a_bound(self):
+        active_requests = 0
+        maximum_active_requests = 0
+        request_lock = threading.Lock()
+
+        def simulate_diagnostic(payload):
+            nonlocal active_requests, maximum_active_requests
+            with request_lock:
+                active_requests += 1
+                maximum_active_requests = max(
+                    maximum_active_requests, active_requests
+                )
+            try:
+                time.sleep(0.02)
+                return {
+                    "result": {
+                        "positive_response": True,
+                        "dtcs": [],
+                        "response_bytes": [0x59],
+                    },
+                    "routing": {"transports": []},
+                }
+            finally:
+                with request_lock:
+                    active_requests -= 1
+
+        with patch.object(
+            self.network, "SCAN_ACTIVITY_PHASE", "idle"
+        ), patch.object(
+            self.network,
+            "_dispatch_sovd_request",
+            side_effect=simulate_diagnostic,
+        ):
+            result = self.network.run_network_diagnostics()
+
+        self.assertEqual(result["component_count"], 15)
+        self.assertEqual(result["successful_count"], 15)
+        self.assertGreater(maximum_active_requests, 1)
+        self.assertLessEqual(maximum_active_requests, 5)
+
     def test_authorized_attack_stop_sets_only_the_active_simulation_stop_signal(self):
         self.assertEqual(
             self.network.request_attack_stop()["status"],

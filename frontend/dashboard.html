@@ -288,11 +288,11 @@
             </div>
             <div class="control">
               <label for="attack-type">Attack scenario</label>
-              <select id="attack-type"></select>
+              <select id="attack-type" onchange="updateScanControls()"></select>
             </div>
             <div class="control">
               <label for="scan-mode">Assessment mode</label>
-              <select id="scan-mode">
+              <select id="scan-mode" onchange="updateScanControls()">
                 <option value="service_center_safe">Service-center safe</option>
                 <option value="oem_validation">OEM validation</option>
                 <option value="lab_penetration_test" selected>Lab penetration test</option>
@@ -302,7 +302,7 @@
             <div class="inline-controls">
               <div class="control">
                 <label for="severity">Severity</label>
-                <select id="severity">
+                <select id="severity" onchange="updateScanControls()">
                   <option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="critical">Critical</option>
                 </select>
               </div>
@@ -550,6 +550,8 @@
     let baselinePreferenceKnown = false;
     let overviewLoaded = false;
     let activityLoaded = false;
+    let activityRequestInFlight = false;
+    let scanPolicyWarning = '';
     let otaPackage = null;
     let otaInProgress = false;
     let otaCatalog = [];
@@ -945,6 +947,18 @@
       ).filter(Boolean);
     }
 
+    function scanPolicyMessage(attackType, severity, scanMode) {
+      if (scanMode === 'service_center_safe') {
+        if (['flooding', 'dos'].includes(attackType)) {
+          return `${attackLabels[attackType] || attackType} is blocked in Service-center safe mode. Choose another scenario, or select OEM validation / Lab penetration test for an authorized simulator test.`;
+        }
+        if (['high', 'critical'].includes(severity)) {
+          return `${severity} severity is not allowed in Service-center safe mode. Choose Low or Medium, or select another assessment mode.`;
+        }
+      }
+      return '';
+    }
+
     function updateScanControls() {
       const targets = selectedTargets();
       const byId = new Map((profileData?.nodes || []).map(node => [node.node_id, node]));
@@ -957,23 +971,45 @@
       );
       setOptions(attackSelect, availableAttacks.map(value => ({value, label: attackLabels[value]})));
       if (availableAttacks.includes(oldAttack)) attackSelect.value = oldAttack;
-      const maximumRank = selectedNodes.length ? severityRank.critical : -1;
+      const scanMode = document.getElementById('scan-mode').value;
+      const maximumRank = Math.min(
+        selectedNodes.length ? severityRank.critical : -1,
+        scanMode === 'service_center_safe' ? severityRank.medium : severityRank.critical
+      );
       [...document.getElementById('severity').options].forEach(option => {
         option.disabled = severityRank[option.value] > maximumRank;
       });
+      [...attackSelect.options].forEach(option => {
+        option.disabled = scanMode === 'service_center_safe'
+          && ['flooding', 'dos'].includes(option.value);
+      });
       const severity = document.getElementById('severity');
       if (maximumRank >= 0 && severityRank[severity.value] > maximumRank) {
-        severity.value = Object.keys(severityRank).find(level => severityRank[level] === maximumRank);
+        severity.value = scanMode === 'service_center_safe'
+          ? 'medium'
+          : Object.keys(severityRank).find(level => severityRank[level] === maximumRank);
       }
+      const policyMessage = scanPolicyMessage(
+        attackSelect.value,
+        severity.value,
+        scanMode
+      );
+      scanPolicyWarning = policyMessage;
       const runButton = document.getElementById('run-scan-button');
       runButton.disabled =
-        !targets.length || !compatible.length || overview?.vehicle_service_state !== 'in_service' || updatingPage;
+        !targets.length
+        || !compatible.length
+        || overview?.vehicle_service_state !== 'in_service'
+        || updatingPage
+        || Boolean(policyMessage);
       
       const feedback = document.getElementById('scan-feedback');
       if (!targets.length) feedback.textContent = 'To run the scan, select an HPC, ZCU or ECU.';
       else if (!compatible.length) feedback.textContent = '';
       else if (overview?.vehicle_service_state !== 'in_service') feedback.textContent = 'Set the simulator vehicle to in service before running a scan.';
+      else if (policyMessage) feedback.textContent = policyMessage;
       else feedback.textContent = '';
+      renderScanPhaseStatus({});
     }
 
     function loadSelectedProfile(panel) {
@@ -1507,6 +1543,8 @@
     }
 
     async function loadActivity() {
+      if (activityRequestInFlight) return;
+      activityRequestInFlight = true;
       try {
         const data = await fetchJson('/api/network/activity?limit=200');
         requestErrors.activity = '';
@@ -1528,6 +1566,8 @@
         document.getElementById('live-refresh-status').textContent =
           `Live activity unavailable · ${requestErrors.activity}. Progress remains at the last server-confirmed phase.`;
         renderScanPhaseStatus({});
+      } finally {
+        activityRequestInFlight = false;
       }
     }
 
@@ -2013,7 +2053,7 @@
     loadActivity();
     setInterval(loadOverview, 5000);
     setInterval(loadSockets, 30000);
-    setInterval(loadActivity, 750);
+    setInterval(loadActivity, 1500);
   </script>
 </body>
 </html>

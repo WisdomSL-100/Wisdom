@@ -704,7 +704,7 @@ def network_observability():
         response = central_request(
             "get",
             f"{CENTRAL_COMPUTE_URL}/network/observability",
-            timeout=15,
+            timeout=13,
         )
         response.raise_for_status()
         data = response.json()
@@ -865,7 +865,7 @@ def network_activity():
             "get",
             f"{CENTRAL_COMPUTE_URL}/network/activity",
             params={"limit": int(limit_text)},
-            timeout=10,
+            timeout=13,
         )
         response.raise_for_status()
         data = response.json()
