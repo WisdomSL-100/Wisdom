@@ -1,4 +1,5 @@
 ﻿import copy
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import hmac
 import json
@@ -351,8 +352,9 @@ NODE_TRAFFIC_STATS = {
 }
 REMOTE_NODE_SNAPSHOTS: Dict[str, Dict[str, Any]] = {}
 REMOTE_SNAPSHOT_REFRESH_LOCK = threading.Lock()
+REMOTE_SNAPSHOT_SCHEDULE_LOCK = threading.Lock()
 REMOTE_SNAPSHOT_REFRESHED_AT = 0.0
-REMOTE_SNAPSHOT_REFRESH_INTERVAL_SECONDS = 0.5
+REMOTE_SNAPSHOT_REFRESH_INTERVAL_SECONDS = 1.0
 NODE_SECURITY_PROFILES = {
     node_id: {
         "security_level": (
@@ -1291,7 +1293,7 @@ def _encode_zcu_relay(zcu_id: str, original: Dict[str, Any], index: int, secret:
 def _refresh_remote_node_snapshots() -> None:
     if VEHICLE_NODE_ID is not None:
         return
-    global REMOTE_SNAPSHOT_REFRESHED_AT
+    global REMOTE_NODE_SNAPSHOTS, REMOTE_SNAPSHOT_REFRESHED_AT
     if (
         REMOTE_NODE_SNAPSHOTS
         and time.monotonic() - REMOTE_SNAPSHOT_REFRESHED_AT
@@ -1306,19 +1308,40 @@ def _refresh_remote_node_snapshots() -> None:
             < REMOTE_SNAPSHOT_REFRESH_INTERVAL_SECONDS
         ):
             return
-        for node_id in NODES:
-            snapshot = _send_node_socket(node_id, {"action": "node_snapshot"})
-            if snapshot.get("node_id") != node_id:
-                raise RuntimeError(
-                    f"Node socket {node_id} returned a mismatched snapshot identity"
-                )
-            if not isinstance(snapshot.get("diagnostics"), dict) or not isinstance(
-                snapshot.get("uds_diagnostics"), dict
-            ):
-                raise RuntimeError(
-                    f"Node socket {node_id} returned an invalid snapshot"
-                )
-            REMOTE_NODE_SNAPSHOTS[node_id] = snapshot
+        refreshed_snapshots = {}
+        refresh_errors = []
+        with ThreadPoolExecutor(max_workers=len(NODES)) as executor:
+            futures = {
+                executor.submit(
+                    _send_node_socket,
+                    node_id,
+                    {"action": "node_snapshot"},
+                ): node_id
+                for node_id in NODES
+            }
+            for future in as_completed(futures):
+                node_id = futures[future]
+                try:
+                    snapshot = future.result()
+                    if snapshot.get("node_id") != node_id:
+                        raise RuntimeError(
+                            f"node socket {node_id} returned a mismatched snapshot identity"
+                        )
+                    if not isinstance(snapshot.get("diagnostics"), dict) or not isinstance(
+                        snapshot.get("uds_diagnostics"), dict
+                    ):
+                        raise RuntimeError(
+                            f"node socket {node_id} returned an invalid snapshot"
+                        )
+                    refreshed_snapshots[node_id] = snapshot
+                except Exception as exc:
+                    refresh_errors.append(f"{node_id}: {exc}")
+
+        REMOTE_NODE_SNAPSHOTS = {
+            **REMOTE_NODE_SNAPSHOTS,
+            **refreshed_snapshots,
+        }
+        for node_id, snapshot in refreshed_snapshots.items():
             traffic = snapshot.get("traffic")
             if isinstance(traffic, dict):
                 NODE_TRAFFIC_STATS[node_id].update(traffic)
@@ -1329,11 +1352,47 @@ def _refresh_remote_node_snapshots() -> None:
                     ACTIVE_SECURITY_EVENTS.append(event)
         del ACTIVE_SECURITY_EVENTS[:-2000]
         REMOTE_SNAPSHOT_REFRESHED_AT = time.monotonic()
+        if refresh_errors:
+            raise RuntimeError(
+                "one or more vehicle node snapshots could not be refreshed: "
+                + "; ".join(refresh_errors)
+            )
+
+
+def _schedule_remote_node_snapshot_refresh() -> None:
+    if VEHICLE_NODE_ID is not None:
+        return
+    if (
+        REMOTE_NODE_SNAPSHOTS
+        and time.monotonic() - REMOTE_SNAPSHOT_REFRESHED_AT
+        < REMOTE_SNAPSHOT_REFRESH_INTERVAL_SECONDS
+    ):
+        return
+    if not REMOTE_SNAPSHOT_SCHEDULE_LOCK.acquire(blocking=False):
+        return
+
+    def refresh_snapshots() -> None:
+        try:
+            _refresh_remote_node_snapshots()
+        except Exception as exc:
+            logging.warning("Remote vehicle node snapshot refresh failed: %s", exc)
+        finally:
+            REMOTE_SNAPSHOT_SCHEDULE_LOCK.release()
+
+    try:
+        threading.Thread(
+            target=refresh_snapshots,
+            name="remote-node-snapshot-refresh",
+            daemon=True,
+        ).start()
+    except Exception:
+        REMOTE_SNAPSHOT_SCHEDULE_LOCK.release()
+        raise
 
 
 def poll_node_messages() -> None:
     if VEHICLE_NODE_ID is None and os.getenv("VEHICLE_NODE_SOCKET_ROUTING") == "1":
-        _refresh_remote_node_snapshots()
+        _schedule_remote_node_snapshot_refresh()
         return
     now_ms = (time.monotonic() - STARTED_AT) * 1000
     secret = socket_secret()
@@ -1645,7 +1704,19 @@ def network_activity(limit: int = 100) -> Dict[str, Any]:
         "signals",
     }
     messages = []
-    for message in recent_node_messages(limit):
+    if VEHICLE_NODE_ID is None and os.getenv("VEHICLE_NODE_SOCKET_ROUTING") == "1":
+        node_messages = [
+            message
+            for snapshot in REMOTE_NODE_SNAPSHOTS.values()
+            for message in snapshot.get("recent_messages", [])
+        ]
+        node_messages = sorted(
+            node_messages,
+            key=lambda message: message["sampled_at_monotonic_ms"],
+        )[-limit:]
+    else:
+        node_messages = recent_node_messages(limit)
+    for message in node_messages:
         if contains_sensitive_location(message.get("message_name")):
             continue
         item = {

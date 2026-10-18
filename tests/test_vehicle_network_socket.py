@@ -826,6 +826,90 @@ class VehicleNetworkSocketTests(unittest.TestCase):
 
         self.assertEqual(send_node_socket.call_count, len(self.network.NODES))
 
+    def test_network_activity_returns_without_waiting_for_snapshot_refresh(self):
+        previous_snapshots = self.network.REMOTE_NODE_SNAPSHOTS
+        previous_refreshed_at = self.network.REMOTE_SNAPSHOT_REFRESHED_AT
+        self.network.VEHICLE_NODE_ID = None
+        self.network.REMOTE_NODE_SNAPSHOTS = {}
+        self.network.REMOTE_SNAPSHOT_REFRESHED_AT = 0.0
+        refresh_started = threading.Event()
+        release_refresh = threading.Event()
+        refresh_finished = threading.Event()
+
+        def slow_refresh():
+            refresh_started.set()
+            release_refresh.wait(timeout=2)
+            refresh_finished.set()
+
+        try:
+            with patch.dict(os.environ, {"VEHICLE_NODE_SOCKET_ROUTING": "1"}):
+                with patch.object(
+                    self.network,
+                    "_refresh_remote_node_snapshots",
+                    side_effect=slow_refresh,
+                ):
+                    started_at = time.monotonic()
+                    activity = self.network.network_activity(20)
+                    elapsed = time.monotonic() - started_at
+                    self.assertEqual(activity["messages"], [])
+                    self.assertTrue(refresh_started.wait(timeout=1))
+                    self.assertLess(elapsed, 0.1)
+                    self.assertFalse(refresh_finished.is_set())
+                    release_refresh.set()
+                    self.assertTrue(refresh_finished.wait(timeout=1))
+                    deadline = time.monotonic() + 1
+                    while self.network.REMOTE_SNAPSHOT_SCHEDULE_LOCK.locked():
+                        if time.monotonic() >= deadline:
+                            self.fail("background snapshot refresh did not release its lock")
+                        time.sleep(0.01)
+        finally:
+            release_refresh.set()
+            self.network.REMOTE_NODE_SNAPSHOTS = previous_snapshots
+            self.network.REMOTE_SNAPSHOT_REFRESHED_AT = previous_refreshed_at
+
+    def test_remote_snapshot_refresh_fetches_nodes_concurrently(self):
+        previous_snapshots = self.network.REMOTE_NODE_SNAPSHOTS
+        previous_refreshed_at = self.network.REMOTE_SNAPSHOT_REFRESHED_AT
+        self.network.VEHICLE_NODE_ID = None
+        self.network.REMOTE_NODE_SNAPSHOTS = {}
+        self.network.REMOTE_SNAPSHOT_REFRESHED_AT = 0.0
+        active_requests = 0
+        maximum_active_requests = 0
+        request_lock = threading.Lock()
+
+        def node_snapshot(node_id, _request):
+            nonlocal active_requests, maximum_active_requests
+            with request_lock:
+                active_requests += 1
+                maximum_active_requests = max(
+                    maximum_active_requests, active_requests
+                )
+            time.sleep(0.05)
+            with request_lock:
+                active_requests -= 1
+            return {
+                "node_id": node_id,
+                "diagnostics": {},
+                "uds_diagnostics": {},
+                "traffic": {},
+                "security_events": [],
+            }
+
+        try:
+            with patch.dict(os.environ, {"VEHICLE_NODE_SOCKET_ROUTING": "1"}):
+                with patch.object(
+                    self.network, "_send_node_socket", side_effect=node_snapshot
+                ):
+                    self.network._refresh_remote_node_snapshots()
+
+            self.assertGreater(maximum_active_requests, 1)
+            self.assertEqual(
+                set(self.network.REMOTE_NODE_SNAPSHOTS), set(self.network.NODES)
+            )
+        finally:
+            self.network.REMOTE_NODE_SNAPSHOTS = previous_snapshots
+            self.network.REMOTE_SNAPSHOT_REFRESHED_AT = previous_refreshed_at
+
     def test_network_activity_exposes_decoded_traffic_and_event_metadata_without_frames(self):
         self.network.poll_node_messages()
         node_id = "ecu-powertrain"

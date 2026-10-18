@@ -28,6 +28,8 @@
     .scan-phase-banner[data-phase="after_attack"] { border-color: #86efac; background: #f0fdf4; color: #166534; }
     .scan-phase-banner[data-phase="idle"] { border-color: var(--line); background: var(--white); color: var(--muted); }
     .scan-phase-banner[data-error="true"] { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
+    .scan-phase-banner[data-warning="true"] { border-color: #fcd34d; background: #fffbeb; color: #92400e; }
+    .scan-phase-banner[data-ready="true"] { border-color: #86efac; background: #f0fdf4; color: #166534; }
     .phase-progress { --progress: 0%; display: flex; position: relative; align-items: flex-start; margin: 0 0 16px; padding: 0; background: linear-gradient(90deg, #16a34a 0 var(--progress), #fff var(--progress) 100%) center 9px / 75% 2px no-repeat; }
     .phase-progress-step { position: relative; z-index: 1; display: grid; flex: 1 1 0; justify-items: center; gap: 5px; min-width: 0; padding: 0 4px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
     .phase-progress-step input { appearance: none; width: 20px; height: 20px; margin: 0; border: 2px solid #98a2b3; border-radius: 50%; background: var(--white); }
@@ -546,6 +548,8 @@
     let serverScanActive = false;
     let baselineChecksRequested = false;
     let baselinePreferenceKnown = false;
+    let overviewLoaded = false;
+    let activityLoaded = false;
     let otaPackage = null;
     let otaInProgress = false;
     let otaCatalog = [];
@@ -1131,6 +1135,7 @@
       try {
         const response = await fetchJson('/api/status');
         requestErrors.overview = '';
+        overviewLoaded = true;
         overview = response.cloud_overview || {};
         document.getElementById('cloud-status').textContent =
           response.status === 'ok' ? `Cloud connected · ${overview.vehicle_service_state || 'unknown'}` : 'Cloud degraded';
@@ -1141,6 +1146,7 @@
         renderScanPhaseStatus({});
       } catch (error) {
         requestErrors.overview = describeRequestError(error);
+        overviewLoaded = false;
         document.getElementById('cloud-status').textContent = `Cloud unavailable · ${requestErrors.overview}`;
         overview = null;
         renderSimulatorToggle();
@@ -1426,11 +1432,43 @@
         requestErrors.activity && `LIVE ACTIVITY · ${requestErrors.activity}`,
         requestErrors.overview && `CLOUD STATUS · ${requestErrors.overview}`
       ].filter(Boolean);
+      const hasCriticalError = Boolean(
+        requestErrors.scan
+        || requestErrors.overview
+        || (
+          requestErrors.activity
+          && !/^(SERVER READ TIMEOUT|SERVER ERROR|HTTP CONNECTION ERROR|REQUEST TIMEOUT)/.test(
+            requestErrors.activity
+          )
+        )
+      );
+      const hasTransientWarning = Boolean(
+        !hasCriticalError
+        && (requestErrors.activity || requestErrors.overview)
+      );
+      const isReady = !scanInProgress
+        && !serverScanActive
+        && !activeErrors.length
+        && overviewLoaded
+        && activityLoaded;
+      const readyStatus = scanCompleted
+        ? 'ASSESSMENT COMPLETE · Final report is ready'
+        : overviewLoaded && !activityLoaded
+          ? 'SYSTEM CONNECTED · Waiting for the first live-activity update'
+          : 'SYSTEM READY · Cloud and live activity connected';
       const statusText = [
-        baseStatus,
-        ...activeErrors.map(message => `ERROR · ${message}`)
+        isReady ? readyStatus : baseStatus,
+        ...activeErrors.map(message => {
+          const warning = message.startsWith('LIVE ACTIVITY ·')
+            && /^(SERVER READ TIMEOUT|SERVER ERROR|HTTP CONNECTION ERROR|REQUEST TIMEOUT)/.test(
+              requestErrors.activity
+            );
+          return `${warning ? 'WARNING' : 'ERROR'} · ${message}`;
+        })
       ].join(' · ');
-      banner.dataset.error = String(activeErrors.length > 0);
+      banner.dataset.error = String(hasCriticalError);
+      banner.dataset.warning = String(hasTransientWarning);
+      banner.dataset.ready = String(isReady);
       if (banner.textContent !== statusText) banner.textContent = statusText;
       renderPhaseProgress(confirmedScanPhase, isRunning, scanCompleted);
     }
@@ -1472,6 +1510,7 @@
       try {
         const data = await fetchJson('/api/network/activity?limit=200');
         requestErrors.activity = '';
+        activityLoaded = true;
         lastActivity = data;
         renderLiveLog(data);
         const stopButton = document.getElementById('stop-scan-button');
@@ -1485,6 +1524,7 @@
         renderScanPhaseStatus(data);
       } catch (error) {
         requestErrors.activity = describeRequestError(error);
+        activityLoaded = false;
         document.getElementById('live-refresh-status').textContent =
           `Live activity unavailable · ${requestErrors.activity}. Progress remains at the last server-confirmed phase.`;
         renderScanPhaseStatus({});
