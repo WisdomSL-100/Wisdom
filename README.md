@@ -5,9 +5,7 @@ security assessment workflows against a simulated software-defined vehicle
 (SDV). It combines a dashboard, cloud-style orchestration API, central scan
 service, and a multi-node vehicle-network simulator.
 
-The project is intended for the Google AI Builder Cup team to understand,
-review, run locally, and later evaluate for a validated Google Cloud
-deployment. **All vehicle, protocol, diagnostic, attack, and firmware-update
+The project is **All vehicle, protocol, diagnostic, attack, and firmware-update
 activity in this repository is simulated. It does not connect to or test a
 physical vehicle.**
 
