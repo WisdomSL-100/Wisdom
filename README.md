@@ -184,8 +184,10 @@ automotive-cybersecurity-scanner/
 │   └── generate_packages.py            # Package generation/check utility
 ├── config/
 │   ├── bootstrap_dev_security.sh       # Creates ignored local-only credentials
-│   ├── deploy_compute_engine.sh         # Existing GCE deployment implementation
-│   ├── GCP_DEPLOYMENT.md                # Current GCP deployment notes
+│   ├── deploy_compute_engine.sh         # GCE VM and IAP/firewall preparation
+│   ├── setup_dashboard_auth.sh          # Prompts privately for HTTPS dashboard credentials
+│   ├── Caddyfile                        # HTTPS reverse proxy and Basic Auth
+│   ├── GCP_DEPLOYMENT.md                # GCP demo deployment runbook
 │   ├── gcp.env                          # Non-secret runtime configuration
 │   └── model-config.yaml
 └── tests/                              # unittest suites and OTA matrix runner
@@ -252,8 +254,9 @@ The last command deletes local persisted simulator/history data. Use it only
 when you intentionally want a clean local environment.
 
 The frontend is on port `3000`. Compose also publishes internal service ports
-for local development; do not open ports `5001` or `5002` to the public
-internet. The node sockets are Compose-private.
+for local development on the VM's loopback address only; do not open ports
+`3000`, `5001`, `5002`, or `5003` to the public internet. The node sockets are
+Compose-private.
 
 ## Tests and generated OTA packages
 
@@ -308,10 +311,11 @@ reviewed before any internet-accessible demo.
 
 ## GCP deployment
 
-The project contains an early Compute Engine deployment script and notes, but
-the Google AI Builder Cup deployment/run instructions will be finalized here
-after the GCP deployment is performed and validated. Until then, do not treat
-the deployment script as proof of a currently running or production-ready GCP
+The project includes a Compute Engine demo deployment path using a Caddy HTTPS
+reverse proxy and Basic Auth. It has not yet been verified against the user's
+GCP project. Follow [the GCP demo deployment runbook](config/GCP_DEPLOYMENT.md)
+from Google Cloud Shell; it covers static IP/DNS, IAP SSH, firewall ports, and
+private password setup. This is a simulator demo, not a hardened production
 service.
 
 ## Scope, privacy, and safe use

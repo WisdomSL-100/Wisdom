@@ -1,0 +1,16 @@
+{$DASHBOARD_DOMAIN} {
+	encode zstd gzip
+
+	basic_auth {
+		{$DASHBOARD_USER} {$DASHBOARD_PASSWORD_HASH}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy no-referrer
+		Strict-Transport-Security "max-age=31536000"
+	}
+
+	reverse_proxy frontend:3000
+}

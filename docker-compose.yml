@@ -137,7 +137,7 @@ services:
       dockerfile: Dockerfile
     container_name: automotive-frontend
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       APP_ENV: development
       CLOUD_APP_URL: http://cloud-app:5003
@@ -157,13 +157,37 @@ services:
       retries: 5
       start_period: 5s
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: aegisdrive-caddy
+    profiles:
+      - public-dashboard
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DASHBOARD_DOMAIN: ${DASHBOARD_DOMAIN:-}
+      DASHBOARD_USER: ${DASHBOARD_USER:-}
+      DASHBOARD_PASSWORD_HASH: ${DASHBOARD_PASSWORD_HASH:-}
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      frontend:
+        condition: service_healthy
+    networks:
+      - automotive-net
+
   vehicle-network:
     build:
       context: ./vehicle-network_Simulator
       dockerfile: Dockerfile
     container_name: vehicle-network
     ports:
-      - "5001:5001"
+      - "127.0.0.1:5001:5001"
     env_file:
       - ./config/gcp.env
     environment:
@@ -194,7 +218,7 @@ services:
       dockerfile: Dockerfile
     container_name: vehicle-central-compute
     ports:
-      - "5002:5002"
+      - "127.0.0.1:5002:5002"
     env_file:
       - ./config/gcp.env
     environment:
@@ -263,7 +287,7 @@ services:
       dockerfile: Dockerfile
     container_name: cloud-app
     ports:
-      - "5003:5003"
+      - "127.0.0.1:5003:5003"
     env_file:
       - ./config/gcp.env
     environment:
@@ -302,5 +326,7 @@ networks:
     driver: bridge
 
 volumes:
+  caddy-config:
+  caddy-data:
   cloud-scan-data:
   vehicle-network-config:
