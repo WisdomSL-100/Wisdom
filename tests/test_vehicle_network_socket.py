@@ -1132,6 +1132,36 @@ class VehicleNetworkSocketTests(unittest.TestCase):
         self.assertGreater(result["dropped_frame_count"], 0)
         self.assertIn("zcu-hpc-tcp", result["affected_sockets"])
 
+    def test_attack_phase_traffic_does_not_evict_attack_activity(self):
+        attack_event = self.network._record_socket_activity(
+            "hpc-can",
+            "hpc-vehicle",
+            "ecu-powertrain",
+            "dropped",
+            {
+                "phase": "attack",
+                "attack_generated": True,
+                "attack_type": "invalid_firmware",
+            },
+            "Simulated attack event",
+        )
+        for _ in range(1000):
+            self.network._record_socket_activity(
+                "hpc-can",
+                "hpc-vehicle",
+                "ecu-powertrain",
+                "accepted",
+                {"phase": "attack", "attack_generated": False},
+                "Ordinary simulator traffic during attack phase",
+            )
+
+        recent_events = self.network._recent_socket_activity(20)
+
+        self.assertIn(
+            attack_event["event_id"],
+            {event["event_id"] for event in recent_events},
+        )
+
     def test_zcu_attack_traffic_uses_the_hpc_zcu_someip_socket(self):
         previous_state = self.network.VEHICLE_SERVICE_STATE
         with self.network.SERVICE_STATE_LOCK:

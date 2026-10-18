@@ -1019,6 +1019,8 @@
       const feedback = document.getElementById('scan-feedback');
       const runBaselineChecks = document.getElementById('run-baseline-checks').checked;
       if (!targets.length) return;
+      latestScan = null;
+      renderAnalytics(null);
       try {
         baselineChecksRequested = runBaselineChecks;
         completedAssessmentPhases.clear();
@@ -1097,7 +1099,7 @@
           overview.vehicle_service_state === 'in_service' ? 'in_service' : 'out_of_service';
         renderSimulatorToggle();
         const scan = overview.last_scan || null;
-        if (scan?.scan_id || scan?.threat_report || scan?.before_attack) {
+        if (!scanInProgress && (scan?.scan_id || scan?.threat_report || scan?.before_attack)) {
           const selectedTargets = selectedTargetsByScan.get(scan.scan_id);
           if (selectedTargets) {
             scan.target_summary = {
@@ -1852,6 +1854,24 @@
         : 'Run a scan to enable report downloads.';
       if (!scan || !(scan.scan_id || scan.before_attack || scan.threat_report)) {
         document.getElementById('analytics-empty').hidden = false;
+        renderPie('baseline-pie', 'baseline-legend', [], 'baseline');
+        renderPie('post-attack-pie', 'post-attack-legend', [], 'issues');
+        const report = document.getElementById('plain-language-report');
+        report.replaceChildren();
+        for (const [heading, message] of [
+          ['What happened', 'Run a scan to see the result in plain language.'],
+          ['Problem found', 'No assessment findings yet.'],
+          ['What to fix', 'Recommendations will appear here after a scan.']
+        ]) {
+          const block = document.createElement('div');
+          block.className = 'report-block';
+          const title = document.createElement('strong');
+          title.textContent = heading;
+          const text = document.createElement('p');
+          text.textContent = message;
+          block.append(title, text);
+          report.appendChild(block);
+        }
         return;
       }
       document.getElementById('analytics-empty').hidden = true;

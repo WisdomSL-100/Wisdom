@@ -171,6 +171,8 @@ class FrontendDashboardTests(unittest.TestCase):
         self.assertIn("Post-attack checks", html)
         self.assertIn('id="run-baseline-checks"', html)
         self.assertIn("Run baseline checks before the attack", html)
+        self.assertIn("latestScan = null;\n      renderAnalytics(null);", html)
+        self.assertIn("if (!scanInProgress && (scan?.scan_id", html)
         self.assertNotIn("workflow-strip", html)
         self.assertIn('id="log-filter-message"', html)
         self.assertIn('id="log-filter-route"', html)
@@ -251,6 +253,32 @@ class FrontendDashboardTests(unittest.TestCase):
             with self.subTest(value=value):
                 response = self.client.get(f"/api/network/activity?limit={value}")
                 self.assertEqual(response.status_code, 400)
+
+    @patch("requests.post")
+    def test_scan_route_allows_time_for_all_assessment_phases(self, post):
+        cloud_response = Mock()
+        cloud_response.status_code = 200
+        cloud_response.json.return_value = {
+            "status": "accepted",
+            "scan": {"scan_id": "scan-test"},
+        }
+        post.return_value = cloud_response
+        duration_seconds = 10
+
+        response = self.client.post(
+            "/api/scan/run",
+            json={
+                "attack_type": "flooding",
+                "severity": "low",
+                "duration_seconds": duration_seconds,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            post.call_args.kwargs["timeout"],
+            duration_seconds + self.frontend.SCAN_TIMEOUT_MARGIN_SECONDS,
+        )
 
     @patch("requests.post")
     def test_ota_flash_route_validates_and_proxies_package(self, post):

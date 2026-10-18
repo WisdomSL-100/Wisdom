@@ -42,6 +42,7 @@ _THREAT_EXPLAINER_SPEC.loader.exec_module(_THREAT_EXPLAINER)
 
 app = Flask(__name__)
 PORT = int(os.getenv("PORT", "5003"))
+SCAN_TIMEOUT_MARGIN_SECONDS = 300
 CENTRAL_COMPUTE_URL = os.getenv(
     "CENTRAL_COMPUTE_URL", "https://vehicle-central-compute:5002"
 )
@@ -1536,7 +1537,7 @@ def trigger_scan():
                     else {}
                 ),
             },
-            timeout=duration_seconds + 45,
+            timeout=duration_seconds + SCAN_TIMEOUT_MARGIN_SECONDS,
         )
         if response.status_code == 409:
             return jsonify(response.json()), 409

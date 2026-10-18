@@ -10,6 +10,7 @@ from flask import Flask, Response, jsonify, render_template_string, request
 app = Flask(__name__)
 CLOUD_APP_URL = os.getenv("CLOUD_APP_URL", "http://cloud-app:5003")
 PORT = int(os.getenv("PORT", "3000"))
+SCAN_TIMEOUT_MARGIN_SECONDS = 330
 OTA_PACKAGE_ROOT = Path(
     os.getenv(
         "OTA_PACKAGE_ROOT",
@@ -1019,7 +1020,7 @@ def trigger_scan():
         response = requests.post(
             f"{CLOUD_APP_URL}/api/scan/start",
             json=data,
-            timeout=duration_seconds + 60,
+            timeout=duration_seconds + SCAN_TIMEOUT_MARGIN_SECONDS,
         )
         if 400 <= response.status_code < 500:
             return jsonify(response.json()), response.status_code

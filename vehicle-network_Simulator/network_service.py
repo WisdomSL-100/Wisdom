@@ -772,7 +772,7 @@ def _record_socket_activity(
             priority = [
                 item for item in SOCKET_ACTIVITY_EVENTS
                 if item.get("attack_generated") is True
-                or item.get("phase") == "attack"
+                or item.get("phase") == "ota"
                 or item.get("event_type") == "attack_marker"
             ][-300:]
             keep = {id(item) for item in priority}
@@ -1441,7 +1441,7 @@ def _recent_socket_activity(limit: int) -> list[Dict[str, Any]]:
         event
         for event in sorted_events
         if event.get("attack_generated") is True
-        or event.get("phase") in ("attack", "ota")
+        or event.get("phase") == "ota"
         or event.get("event_type") == "attack_marker"
     ][-(limit * 3 // 4):]
     remaining = limit - len(priority_events)
@@ -1449,7 +1449,7 @@ def _recent_socket_activity(limit: int) -> list[Dict[str, Any]]:
         event
         for event in sorted_events
         if event.get("attack_generated") is not True
-        and event.get("phase") not in ("attack", "ota")
+        and event.get("phase") != "ota"
         and event.get("event_type") != "attack_marker"
     ][-remaining:] if remaining else []
     return [

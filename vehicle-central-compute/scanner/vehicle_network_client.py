@@ -67,7 +67,7 @@ def vehicle_network_request(action: str, **parameters: Any) -> Dict[str, Any]:
         and type(requested_duration) is int
         and 1 <= requested_duration <= 60
     ):
-        socket_timeout += requested_duration + 30
+        socket_timeout += requested_duration + 60
     elif action in ("network_diagnostics", "snapshot"):
         socket_timeout = 60
     elif action == "ota_flash":
