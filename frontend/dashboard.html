@@ -23,15 +23,15 @@
     .subtitle, .muted { color: var(--muted); }
     .badge { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; background: #ecfdf3; color: #027a48; padding: 7px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; }
     .badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-    .scan-phase-banner { margin-bottom: 12px; border: 1px solid #bfdbfe; border-radius: 10px; padding: 9px 12px; background: #eff6ff; color: #1e3a8a; font-weight: 800; }
+    .scan-phase-banner { margin-bottom: 12px; border: 1px solid #bfdbfe; border-radius: 10px; padding: 9px 12px; background: #eff6ff; color: #1e3a8a; font-weight: 800; overflow-wrap: anywhere; }
     .scan-phase-banner[data-phase="attack"] { border-color: #fdba74; background: #fff7ed; color: #9a3412; }
     .scan-phase-banner[data-phase="after_attack"] { border-color: #86efac; background: #f0fdf4; color: #166534; }
     .scan-phase-banner[data-phase="idle"] { border-color: var(--line); background: var(--white); color: var(--muted); }
-    .scan-phase-banner[data-running="true"] { animation: phase-alert 1s ease-in-out infinite; }
+    .scan-phase-banner[data-error="true"] { border-color: #fca5a5; background: #fef2f2; color: #991b1b; }
     .phase-progress { --progress: 0%; display: flex; position: relative; align-items: flex-start; margin: 0 0 16px; padding: 0; background: linear-gradient(90deg, #16a34a 0 var(--progress), #fff var(--progress) 100%) center 9px / 75% 2px no-repeat; }
     .phase-progress-step { position: relative; z-index: 1; display: grid; flex: 1 1 0; justify-items: center; gap: 5px; min-width: 0; padding: 0 4px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
-    .phase-progress-step input { appearance: none; width: 20px; height: 20px; margin: 0; border: 2px solid #98a2b3; border-radius: 50%; background: var(--white); transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease; }
-    .phase-progress-step[data-state="active"] input { border-color: #f97316; background: radial-gradient(circle, #f97316 0 4px, var(--white) 4.5px); animation: progress-pulse 1s ease-in-out infinite; }
+    .phase-progress-step input { appearance: none; width: 20px; height: 20px; margin: 0; border: 2px solid #98a2b3; border-radius: 50%; background: var(--white); }
+    .phase-progress-step[data-state="active"] input { border-color: #f97316; background: radial-gradient(circle, #f97316 0 4px, var(--white) 4.5px); }
     .phase-progress-step[data-state="done"] input { border-color: #16a34a; background: #16a34a; box-shadow: inset 0 0 0 4px var(--white); }
     .phase-progress-step[data-state="active"] { color: #9a3412; }
     .phase-progress-step[data-state="done"] { color: #166534; }
@@ -176,12 +176,6 @@
     .log-table tr[data-phase="after_attack"] td { background: #f0fdf4; }
     @keyframes live-pulse { 50% { opacity: .45; transform: scale(.75); } }
     @keyframes packet-arrival { from { background-color: #bfdbfe; } to { background-color: inherit; } }
-    @keyframes phase-alert { 50% { box-shadow: 0 0 0 4px #fed7aa; } }
-    @keyframes progress-pulse { 50% { box-shadow: 0 0 0 5px #fed7aa; } }
-    @media (prefers-reduced-motion: reduce) {
-      .scan-phase-banner[data-running="true"],
-      .phase-progress-step[data-state="active"] input { animation: none; }
-    }
     .stop-button { width: 100%; margin-top: 8px; border-color: var(--red); background: #fff1f1; color: #a11f2e; }
     .scenario-note { background: #f3fbff; border-left: 4px solid #68c8f4; padding: 9px 12px; color: var(--muted); }
     .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 12px; }
@@ -547,7 +541,11 @@
     const selectedTargetsByScan = new Map();
     let updatingPage = false;
     let scanInProgress = false;
+    let scanCompleted = false;
+    let confirmedScanPhase = null;
+    let serverScanActive = false;
     let baselineChecksRequested = false;
+    let baselinePreferenceKnown = false;
     let otaPackage = null;
     let otaInProgress = false;
     let otaCatalog = [];
@@ -555,6 +553,7 @@
     let lastActivity = {messages: [], security_events: [], diagnostics: [], socket_events: []};
     const renderedPacketIds = new Set();
     const completedAssessmentPhases = new Set();
+    const requestErrors = {activity: '', overview: '', scan: ''};
 
     setOptions(
       document.getElementById('log-socket-filter'),
@@ -574,9 +573,41 @@
 
     async function fetchJson(path, options = {}) {
       const response = await fetch(path, options);
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || `Request failed (${response.status})`);
+      let data;
+      try {
+        data = await response.json();
+      } catch (error) {
+        const responseError = new Error(
+          response.ok
+            ? `Invalid JSON response (HTTP ${response.status})`
+            : `HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`
+        );
+        responseError.status = response.status;
+        throw responseError;
+      }
+      if (!response.ok) {
+        const responseError = new Error(
+          data.message || `HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`
+        );
+        responseError.status = response.status;
+        throw responseError;
+      }
       return data;
+    }
+
+    function describeRequestError(error) {
+      const detail = error?.message || String(error);
+      if (error?.name === 'AbortError') return `REQUEST TIMEOUT · ${detail}`;
+      if (/read timed? out|read timeout/i.test(detail)) {
+        return `SERVER READ TIMEOUT${error?.status ? ` · HTTP ${error.status}` : ''} · ${detail}`;
+      }
+      if (/timed? out|timeout/i.test(detail)) return `REQUEST TIMEOUT · ${detail}`;
+      if (error?.status) {
+        const kind = error.status >= 500 ? 'SERVER ERROR' : 'HTTP ERROR';
+        return `${kind} · HTTP ${error.status} · ${detail}`;
+      }
+      if (error instanceof TypeError) return `HTTP CONNECTION ERROR · ${detail}`;
+      return `REQUEST ERROR · ${detail}`;
     }
 
     function setOptions(select, values, selectedValues = []) {
@@ -1023,11 +1054,14 @@
       renderAnalytics(null);
       try {
         baselineChecksRequested = runBaselineChecks;
+        baselinePreferenceKnown = true;
         completedAssessmentPhases.clear();
+        confirmedScanPhase = null;
+        serverScanActive = false;
+        scanCompleted = false;
+        requestErrors.scan = '';
         scanInProgress = true;
-        renderScanPhaseStatus({
-          scan_phase: runBaselineChecks ? 'before_attack' : 'attack'
-        });
+        renderScanPhaseStatus({});
         document.getElementById('stop-scan-button').hidden = false;
         updatingPage = true;
         updateScanControls();
@@ -1054,20 +1088,24 @@
             target_node_ids: targets
           };
           if (latestScan.scan_id) selectedTargetsByScan.set(latestScan.scan_id, targets);
-          feedback.textContent = 'Generating the final assessment report…';
-          renderScanPhaseStatus({scan_phase: 'report'});
+          feedback.textContent = 'Assessment complete. Preparing the final report…';
         }
+        confirmedScanPhase = 'report';
+        scanCompleted = true;
+        requestErrors.scan = '';
+        renderScanPhaseStatus({});
         renderAnalytics(latestScan);
-        if (latestScan) completedAssessmentPhases.add('report');
         feedback.textContent = `Scan finished: ${latestScan?.status || latestScan?.scan_status || 'result received'}. Download the report as Markdown or Excel workbook.`;
         await Promise.all([loadOverview(), loadActivity()]);
       } catch (error) {
+        requestErrors.scan = describeRequestError(error);
+        renderScanPhaseStatus({});
         feedback.classList.add('error');
-        feedback.textContent = `Scan failed: ${error.message}`;
+        feedback.textContent = `Scan request failed · ${requestErrors.scan}. Progress is held at the last server-confirmed phase.`;
         feedback.scrollIntoView({block: 'center'});
       } finally {
         scanInProgress = false;
-        renderScanPhaseStatus({scan_phase: 'idle'});
+        renderScanPhaseStatus({});
         document.getElementById('stop-scan-button').hidden = true;
         updatingPage = false;
         updateScanControls();
@@ -1092,6 +1130,7 @@
     async function loadOverview() {
       try {
         const response = await fetchJson('/api/status');
+        requestErrors.overview = '';
         overview = response.cloud_overview || {};
         document.getElementById('cloud-status').textContent =
           response.status === 'ok' ? `Cloud connected · ${overview.vehicle_service_state || 'unknown'}` : 'Cloud degraded';
@@ -1099,11 +1138,14 @@
           overview.vehicle_service_state === 'in_service' ? 'in_service' : 'out_of_service';
         renderSimulatorToggle();
         updateScanControls();
+        renderScanPhaseStatus({});
       } catch (error) {
-        document.getElementById('cloud-status').textContent = `Cloud unavailable: ${error.message}`;
+        requestErrors.overview = describeRequestError(error);
+        document.getElementById('cloud-status').textContent = `Cloud unavailable · ${requestErrors.overview}`;
         overview = null;
         renderSimulatorToggle();
         updateScanControls();
+        renderScanPhaseStatus({});
       }
     }
 
@@ -1327,69 +1369,90 @@
     }
 
     function renderScanPhaseStatus(data) {
-      const phase = data.scan_phase || 'idle';
+      const phases = ['before_attack', 'attack', 'after_attack', 'report'];
+      const reportedPhase = data.scan_phase === 'protocol_probes'
+        ? 'before_attack'
+        : data.scan_phase;
       const phaseUpdatedAt = Number(data.scan_phase_updated_at);
       const phaseIsRecent = Number.isFinite(phaseUpdatedAt)
         && Date.now() / 1000 - phaseUpdatedAt >= 0
         && Date.now() / 1000 - phaseUpdatedAt <= 120;
-      const isKnownActivePhase = [
-        'before_attack',
-        'protocol_probes',
-        'attack',
-        'after_attack',
-        'report'
-      ].includes(phase);
-      const isRunning = scanInProgress
-        || data.attack_active === true
-        || (phaseIsRecent && isKnownActivePhase);
+      const hasServerActivePhase = phases.includes(reportedPhase)
+        && (data.attack_active === true || phaseIsRecent);
+      if (hasServerActivePhase) {
+        serverScanActive = true;
+        const reportedIndex = phases.indexOf(reportedPhase);
+        const confirmedIndex = phases.indexOf(confirmedScanPhase);
+        if (confirmedScanPhase === null || reportedIndex > confirmedIndex) {
+          confirmedScanPhase = reportedPhase;
+        }
+      } else if (data.scan_phase === 'idle' && data.attack_active === false) {
+        serverScanActive = false;
+        if (!scanInProgress && !scanCompleted && !requestErrors.scan) {
+          confirmedScanPhase = null;
+        }
+      }
+      const isRunning = !scanCompleted && (
+        scanInProgress
+        || serverScanActive
+        || Boolean(requestErrors.scan && confirmedScanPhase)
+      );
       const labels = {
         before_attack: 'BASELINE CHECKS RUNNING · Collecting pre-attack behavior and diagnostics',
         protocol_probes: 'BASELINE CHECKS RUNNING · Safe validation probes, not an attack',
         attack: 'AUTHORIZED ATTACK RUNNING · Simulator-only traffic is being sent',
         after_attack: 'POST-ATTACK VALIDATION RUNNING · Checking response and recovery',
         report: 'FINAL REPORT GENERATION · Preparing downloadable Markdown and Excel report',
-        idle: scanInProgress ? 'ASSESSMENT FINALIZING · Preparing the result' : 'ASSESSMENT STATUS · No scan running'
+        idle: 'ASSESSMENT STATUS · No scan running'
       };
       const banner = document.getElementById('scan-phase-banner');
-      const displayPhase = isRunning ? phase : 'idle';
+      const displayPhase = confirmedScanPhase || 'idle';
       banner.dataset.phase = displayPhase;
-      banner.dataset.running = String(isRunning);
-      const statusText = labels[displayPhase] || `ASSESSMENT STATUS · ${displayPhase.replaceAll('_', ' ')}`;
+      banner.dataset.running = String(isRunning && !requestErrors.scan);
+      const phaseStatus = confirmedScanPhase
+        ? labels[confirmedScanPhase]
+        : 'No server-confirmed phase was reached';
+      const baseStatus = scanCompleted
+        ? 'ASSESSMENT COMPLETE · Final report is ready'
+        : requestErrors.scan
+          ? `SCAN INTERRUPTED · Last server-confirmed phase: ${phaseStatus}`
+          : confirmedScanPhase
+            ? phaseStatus
+            : scanInProgress
+            ? 'SCAN REQUEST SENT · Waiting for the server to confirm the first phase'
+            : labels.idle;
+      const activeErrors = [
+        requestErrors.scan,
+        requestErrors.activity && `LIVE ACTIVITY · ${requestErrors.activity}`,
+        requestErrors.overview && `CLOUD STATUS · ${requestErrors.overview}`
+      ].filter(Boolean);
+      const statusText = [
+        baseStatus,
+        ...activeErrors.map(message => `ERROR · ${message}`)
+      ].join(' · ');
+      banner.dataset.error = String(activeErrors.length > 0);
       if (banner.textContent !== statusText) banner.textContent = statusText;
-      renderPhaseProgress(displayPhase, data, isRunning);
+      renderPhaseProgress(confirmedScanPhase, isRunning, scanCompleted);
     }
 
-    function renderPhaseProgress(phase, data, isRunning) {
-      const phases = [
-        'before_attack',
-        'attack',
-        'after_attack',
-        'report'
-      ];
-      if (isRunning) {
-        for (const item of [
-          ...(data.messages || []),
-          ...(data.security_events || []),
-          ...(data.diagnostics || []),
-          ...(data.socket_events || [])
-        ]) {
-          const itemPhase = item.phase === 'protocol_probes' ? 'before_attack' : item.phase;
-          if (phases.includes(itemPhase)) completedAssessmentPhases.add(itemPhase);
-        }
+    function renderPhaseProgress(phase, isRunning, isComplete) {
+      const phases = ['before_attack', 'attack', 'after_attack', 'report'];
+      const currentIndex = phases.indexOf(phase);
+      const skippedBaseline = baselinePreferenceKnown
+        && !baselineChecksRequested
+        && currentIndex >= phases.indexOf('attack');
+      completedAssessmentPhases.clear();
+      if (isComplete) {
+        phases.forEach(item => completedAssessmentPhases.add(item));
+      } else if (currentIndex >= 0) {
+        phases.slice(0, currentIndex).forEach(item => completedAssessmentPhases.add(item));
       }
-      const progressPhase = isRunning
-        ? phase === 'protocol_probes' ? 'before_attack' : phase
-        : 'idle';
-      if (phases.includes(progressPhase)) {
-        const activeIndex = phases.indexOf(progressPhase);
-        phases.slice(0, activeIndex).forEach(item => completedAssessmentPhases.add(item));
-      }
+      if (skippedBaseline) completedAssessmentPhases.add('before_attack');
       document.querySelectorAll('#phase-progress [data-phase]').forEach(step => {
         const stepPhase = step.dataset.phase;
         const checkbox = step.querySelector('input');
-        const skipped = stepPhase === 'before_attack' && !baselineChecksRequested;
-        const active = progressPhase === stepPhase;
-        if (skipped && scanInProgress) completedAssessmentPhases.add('before_attack');
+        const skipped = stepPhase === 'before_attack' && skippedBaseline;
+        const active = !isComplete && isRunning && phase === stepPhase;
         const completed = completedAssessmentPhases.has(stepPhase);
         step.dataset.state = active ? 'active' : completed ? 'done' : 'pending';
         checkbox.checked = completed;
@@ -1397,32 +1460,34 @@
         const note = step.querySelector('.phase-note');
         if (note) note.textContent = skipped && completed ? '· skipped' : '';
       });
-      const activeIndex = phases.indexOf(progressPhase);
-      let completedPrefix = 0;
-      while (completedPrefix < phases.length && completedAssessmentPhases.has(phases[completedPrefix])) {
-        completedPrefix += 1;
-      }
-      const progressPhases = phases;
-      const currentIndex = progressPhases.indexOf(progressPhase);
-      const progress = currentIndex >= 0
-        ? currentIndex / (progressPhases.length - 1) * 100
-        : Math.min(completedPrefix, progressPhases.length - 1) / (progressPhases.length - 1) * 100;
+      const progress = isComplete
+        ? 100
+        : currentIndex >= 0
+          ? currentIndex / (phases.length - 1) * 100
+          : 0;
       document.getElementById('phase-progress').style.setProperty('--progress', `${progress}%`);
     }
 
     async function loadActivity() {
       try {
         const data = await fetchJson('/api/network/activity?limit=200');
+        requestErrors.activity = '';
         lastActivity = data;
         renderLiveLog(data);
         const stopButton = document.getElementById('stop-scan-button');
         if (scanInProgress) stopButton.disabled = !data.attack_active;
         const phase = (data.scan_phase || 'idle').replaceAll('_', ' ');
+        const displayedPhase = scanInProgress && confirmedScanPhase
+          ? confirmedScanPhase.replaceAll('_', ' ')
+          : phase;
         document.getElementById('live-refresh-status').textContent =
-          `Phase: ${phase}${data.attack_active ? ' · attack running' : ''} · refreshed ${data.observed_at || ''}. Simulator-only activity; no physical vehicle traffic.`;
+          `Phase: ${displayedPhase}${data.attack_active ? ' · attack running' : ''} · refreshed ${data.observed_at || ''}. Simulator-only activity; no physical vehicle traffic.`;
         renderScanPhaseStatus(data);
       } catch (error) {
-        document.getElementById('live-refresh-status').textContent = `Live activity unavailable: ${error.message}`;
+        requestErrors.activity = describeRequestError(error);
+        document.getElementById('live-refresh-status').textContent =
+          `Live activity unavailable · ${requestErrors.activity}. Progress remains at the last server-confirmed phase.`;
+        renderScanPhaseStatus({});
       }
     }
 
